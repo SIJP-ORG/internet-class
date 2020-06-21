@@ -9,4 +9,4 @@ import logging
 logging.basicConfig(stream=sys.stderr)
 sys.path.insert(0,"/var/www/html/dns/")
 
-from dnsapp import app as application
+from dnsapp.main import app as application
