@@ -2,7 +2,18 @@
 <title>{% block title %}{% endblock %} - dnsapp</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
-<section class="content">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script type="text/javascript">// <![CDATA[
+  function loading(){
+      $(".loader").show();
+      $(".content").hide();
+  }
+// ]]></script>
+
+<body>
+  <div class="loader"></div>
+
+  <section class="content">
     <header>
       {% block header %}{% endblock %}
     </header>
@@ -10,4 +21,6 @@
       <div class="flash">{{ message }}</div>
     {% endfor %}
     {% block content %}{% endblock %}
-</section>
+  </section>
+</body>
+

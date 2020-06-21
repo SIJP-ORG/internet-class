@@ -5,6 +5,7 @@ app = Flask(__name__, instance_relative_config=True)
 app.config.from_mapping(
     SECRET_KEY='dev',
     DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
+    SEND_FILE_MAX_AGE_DEFAULT=0,
 )
 
 # load the instance config, if it exists
