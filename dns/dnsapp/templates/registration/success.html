@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Success (せいこう){% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+  <div>Your IP address {{info.ipaddress}} is now named as {{info.fullname}}.</div>
+  <div>あなたのIPアドレス {{info.ipaddress}} に {{info.fullname}} というなまえがつきました</div>
+
+  <br>
+  <div>
+    Access your server. <a href=http://{{info.fullname}}>http://{{info.fullname}}</a>
+  </div>
+  <div>
+    あなたのサーバーにアクセスしましょう。<a href=http://{{info.fullname}}>http://{{info.fullname}}</a>
+  </div>
+{% endblock %}

@@ -1,8 +1,10 @@
 import functools
+import time
 import boto3
 from flask import Blueprint, flash, g, redirect, render_template, request, session, url_for
 
-domainname = 'ninja.fish'
+DOMAIN = 'ninja.fish'
+ZONEID = 'Z04921881CATTNOQUCZ18'
 
 bp = Blueprint('registration', __name__, url_prefix='/registration')
 
@@ -14,6 +16,7 @@ def root():
     if request.method == 'POST':
         ipaddress = request.form['ipaddress']
         servername = request.form['servername']
+        fullname = '{0}.{1}'.format(servername, DOMAIN)
         error = None
 
         if not ipaddress:
@@ -22,23 +25,23 @@ def root():
             error = 'You need to enter a name. (なまえをいれてください)'
         
         if error is None:
-            error = add_dns_resource(ipaddress, servername)
+            error = add_dns_resource(ipaddress, fullname)
             pass
         
         if error is None:
-            return render_template('registration/view.html')
-            #return render_template('registration/success.html')
+            info = {'ipaddress': ipaddress, 'fullname': fullname}
+            return render_template('registration/success.html', info = info)
         
         flash(error)
         return render_template('registration/view.html')
 
-def add_dns_resource(ipaddress, servername):
+def add_dns_resource(ipaddress, fullname):
     '''Add a new record to DNS. Returning None for success. Error string for failure.'''
-    zoneid = 'Z04921881CATTNOQUCZ18'
-    fullname = '{0}.{1}'.format(servername, domainname)
     try:
-        response = boto3.client('route53').change_resource_record_sets(
-            HostedZoneId = zoneid,
+        r53 = boto3.client('route53')
+
+        createResponse = r53.change_resource_record_sets(
+            HostedZoneId = ZONEID,
             ChangeBatch = {
                 'Changes': [{
                     'Action': 'CREATE',
@@ -49,8 +52,18 @@ def add_dns_resource(ipaddress, servername):
                         'ResourceRecords': [{'Value': ipaddress}]
                     }
                 }]
-            })        
+            })
+        changeId = createResponse['ChangeInfo']['Id']
+
+        # TODO: max retry and error out
+        while True:
+            time.sleep(5)
+            changeResponse = r53.get_change(Id = changeId)
+            if changeResponse['ChangeInfo']['Status'] == 'INSYNC':
+                break
+
         return None
     except Exception as e:
+        # TODO: convert user firendly message (e.g. already used)
         return 'Error {0}'.format(str(e))
 
