@@ -1,5 +1,5 @@
 import os
-from flask import (Flask, redirect, url_for)
+from flask import Flask, redirect, url_for
 
 app = Flask(__name__, instance_relative_config=True)
 app.config.from_mapping(
@@ -32,4 +32,4 @@ def hello():
 
 # For debugging server. Run 'python __init__.py'
 if __name__ == "__main__":
-    app.run(host='0.0.0.0')
+    app.run(host='0.0.0.0', debug=True)
