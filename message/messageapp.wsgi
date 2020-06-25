@@ -9,4 +9,5 @@ import logging
 logging.basicConfig(stream=sys.stderr)
 sys.path.insert(0,"/var/www/html/message/")
 
-from messageapp.main import app as application
+from messageapp import create_app
+application = create_app()
