@@ -1,0 +1,36 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: SIJP event messenger
+
+Parameters:
+  MachineName:
+    Type: String
+    Description: Name of the instance. Alphanumerical only.
+    AllowedPattern: "[a-zA-Z0-9-]+"
+  ImageId:
+    Type: String
+    Description: AMI ID
+
+Resources:
+  Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      SubnetId: subnet-97792ebc # us-west-2d
+      ImageId: !Ref ImageId
+      KeyName: sijpevent-default
+      InstanceType: t3a.nano
+      BlockDeviceMappings:
+      - DeviceName: /dev/sda1
+        Ebs:
+          VolumeType: gp2  # general purpose SSD
+          DeleteOnTermination: true
+          VolumeSize: 8
+      SecurityGroupIds:
+      - sg-00f56b4a19895cd13
+      Tags:
+        - Key: Name
+          Value: !Ref MachineName
+
+Outputs:
+  PublicIp:
+    Description: 'Public IP address'
+    Value: !GetAtt Instance.PublicIp
