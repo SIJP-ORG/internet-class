@@ -15,7 +15,7 @@ def sendnew():
     cur = con.cursor()
     cur.execute(
         'insert into msg (sender, arrival, body) values (?, ?, ?)',
-        ('dummy-sender', datetime.datetime.now(), data['msg'])
+        (request.remote_addr, datetime.datetime.now(), data['msg'])
     )
     rowid = cur.lastrowid
     con.commit()
