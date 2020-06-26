@@ -15,19 +15,21 @@ def get_db():
     return g.db
 
 def close_db(e=None):
+    '''Closing database connection. It's automatically called at app tear down.'''
     db = g.pop('db', None)
-
     if db is not None:
         db.close()
 
-def init_db():
-    db = get_db()
-
-    with current_app.open_resource('schema.sql') as f:
-        db.executescript(f.read().decode('utf8'))
-
 def dict_factory(cursor, row):
+    '''return query as Python dict'''
     d = {}
     for idx, col in enumerate(cursor.description):
         d[col[0]] = row[idx]
     return d
+
+def init_db():
+    '''Clear the existing data and create new tables.'''
+    db = get_db()
+    with current_app.open_resource('schema.sql') as sql:
+        db.executescript(sql.read().decode('utf8'))
+    return 'Initialized the database.'
