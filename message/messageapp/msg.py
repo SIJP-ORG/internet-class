@@ -31,3 +31,10 @@ def getall():
     ).fetchall()
 
     return jsonify(msgs)
+
+def get_messages():
+    '''Retrieve the latest 100 messages in reverse chronological order.'''
+    return db.get_db().execute(
+        'select sender, body'
+        ' from msg'
+    ).fetchall()

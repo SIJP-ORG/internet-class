@@ -1,26 +1,32 @@
 <!doctype html>
-<title>{% block title %}{% endblock %} - dnsapp</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<html>
+  <head>
+    {% block head %}
+    <title>{% block title %}{% endblock %}</title>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script type="text/javascript">// <![CDATA[
-  function loading(){
-      $(".loader").show();
-      $(".content").hide();
-  }
-// ]]></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
-<body>
-  <div class="loader"></div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript">// <![CDATA[
+      function loading(){
+          $(".loader").show();
+          $(".content").hide();
+      }
+    // ]]></script>
+    {% endblock %}
+  </head>
 
-  <section class="content">
-    <header>
-      {% block header %}{% endblock %}
-    </header>
-    {% for message in get_flashed_messages() %}
-      <div class="flash">{{ message }}</div>
-    {% endfor %}
-    {% block content %}{% endblock %}
-  </section>
-</body>
-
+  <body>
+    <div class="loader"></div>
+  
+    <section class="content">
+      <header>
+        {% block header %}{% endblock %}
+      </header>
+      {% for message in get_flashed_messages() %}
+        <div class="flash">{{ message }}</div>
+      {% endfor %}
+      {% block content %}{% endblock %}
+    </section>
+  </body>
+</html>

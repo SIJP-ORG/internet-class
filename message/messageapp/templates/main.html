@@ -1,0 +1,40 @@
+
+{% extends 'base.html' %}
+
+{% block head %}
+  {{ super() }}
+  <script type="text/javascript">// <![CDATA[
+    window.onload = setupRefresh;
+
+    function setupRefresh()
+    {
+        refreshBlock();
+        setInterval("refreshBlock();",5000);
+    }
+    
+    function refreshBlock()
+    {
+       $('#messagetable').load("table");
+    }
+// ]]></script>
+{% endblock %}
+
+{% block header %}
+  <h1>{% block title %}Let's send a message (メッセージをおくってみましょう){% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+  <form method="post">
+    <label for="destination">Destination (あてさき)</label>
+    <input name="destination" id="destination" required>
+    <label for="message">Message (メッセージ)</label>
+    <input name="message" id="message" required>
+    <input type="submit" value="Send (おくる)">
+  </form>
+
+  <hr>
+  Received Messages (じゅしんしたメッセージ)
+  <br>
+  <div id="messagetable"></div>
+
+{% endblock %}
