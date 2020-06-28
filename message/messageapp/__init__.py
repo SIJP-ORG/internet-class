@@ -25,8 +25,12 @@ def create_app(test_config=None):
     db.init_app(app)
 
     # define routes
-    app.add_url_rule('/', view_func=ui.root, methods=['GET', 'POST'])
+    app.add_url_rule('/', view_func=ui.root, methods=['GET'])
+    app.add_url_rule('/send', view_func=ui.send, methods=['POST'])
+    app.add_url_rule('/result', view_func=ui.success, methods=['GET'])
+    app.add_url_rule('/error', view_func=ui.error, methods=['GET'])
     app.add_url_rule('/table', view_func=ui.table, methods=['GET'])
+    
     app.add_url_rule('/msg/sendnew', view_func=msg.sendnew, methods=['POST'])
     app.add_url_rule('/msg', view_func=msg.getall, methods=['GET'])   
     app.add_url_rule('/init-db', view_func=db.init_db, methods=['GET'])

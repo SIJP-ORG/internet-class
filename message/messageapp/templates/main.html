@@ -1,40 +1,101 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Message app on Ninja.Fish</title>
+    <meta name="robots" content="noindex">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
-{% extends 'base.html' %}
+    <script type="text/javascript">// <![CDATA[
+      window.onload = setupRefresh;
+  
+      function setupRefresh()
+      {
+          refreshBlock();
+          setInterval("refreshBlock();",3000);
+      }
+      
+      function refreshBlock()
+      {
+         $('#messagetable').load("table");
+      }
 
-{% block head %}
-  {{ super() }}
-  <script type="text/javascript">// <![CDATA[
-    window.onload = setupRefresh;
+      function destination2OnChange()
+      {
+        document.getElementById("destination-input").value =
+         document.getElementById("destination2").value;
+      }
+  // ]]></script>
+  </head>
 
-    function setupRefresh()
-    {
-        refreshBlock();
-        setInterval("refreshBlock();",5000);
-    }
-    
-    function refreshBlock()
-    {
-       $('#messagetable').load("table");
-    }
-// ]]></script>
-{% endblock %}
+  <body>
+    <div class="title-container">
+      <div><img class="title-img" src="{{ url_for('static', filename='ninja-fish-1.jpg') }}"></div>
+      <div>
+        <div class="title-string">
+          Let's send a message<br>(メッセージをおくってみよう)
+        </div>
+      </div>
+      <div><img class="title-img" src="{{ url_for('static', filename='ninja-fish-2.jpg') }}"> </div>
+    </div>
 
-{% block header %}
-  <h1>{% block title %}Let's send a message (メッセージをおくってみましょう){% endblock %}</h1>
-{% endblock %}
+    <hr>
 
-{% block content %}
-  <form method="post">
-    <label for="destination">Destination (あてさき)</label>
-    <input name="destination" id="destination" required>
-    <label for="message">Message (メッセージ)</label>
-    <input name="message" id="message" required>
-    <input type="submit" value="Send (おくる)">
-  </form>
+    <div class="send-container">
+      <div class="send-child">
+        <table class="hostinfo">
+          <tr>
+            <th class="send-header">You (あなた)</th>
+            <th></th>
+          </tr>
+          <tr>
+            <td class="send-label">Host name (ホストネーム):</td>
+            <td class="send-value">test.ninja.fish</td>
+          </tr>
+          <tr>
+            <td class="send-label">IP address (IPアドレス):</td>
+            <td class="send-value">54.3.12.101</td>
+          </tr>
+        </table> 
+      </div>
+      <div class="send-child">
+        <table class="hostinfo">
+          <tr>
+            <th class="send-header">Your friend (おともだち)</th>
+            <th></th>
+          </tr>
+          <tr>
+            <td class="send-label">Host name (ホストネーム):</td>
+            <td class="send-value"><input id="destination2" onchange="destination2OnChange()"></td>
+          </tr>
+          <tr>
+            <td class="send-label">IP address (IPアドレス):</td>
+            <td class="send-value">{{ param.destip }}</td>
+          </tr>
+        </table>
+      </div>
+      <div class="send-child">
+        <img class='send-image' src="{{ url_for('static', filename='start.gif') }}">
+      </div>
+      <div class="send-child">
+        <div>
+          <form action="/send" method="post">
+            <div>Message (メッセージ):
+            <input type="text" name="message" id="message-input" required>
+            <input type="text" name="destination" id="destination-input" class="hidden">
+            <input type="submit" id="message-submit" value="Send (おくる)">
+            </div>
+          </form>
+        </div>
+        <div>Error message here.</div>
+    </div>
+    </div>
+  
+    <hr>
+    <br>
+    Received Messages (じゅしんしたメッセージ)
+    <br>
+    <div id="messagetable"></div>
 
-  <hr>
-  Received Messages (じゅしんしたメッセージ)
-  <br>
-  <div id="messagetable"></div>
-
-{% endblock %}
+  </body>
+</html>

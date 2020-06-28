@@ -5,7 +5,11 @@ from flask_table import Table, Col
 
 def root():
     if request.method == 'GET':
-        return render_template('main.html')
+        param = {
+            'destip': '',
+        }
+
+        return render_template('main.html', param=param)
 
     if request.method == 'POST':
         destination = request.form['destination']
@@ -27,11 +31,23 @@ def root():
         result = {'msg': result_message}
         return render_template('main.html', result = result)
 
-class MessageTable(Table):
-    sender = Col('Sender (おくったひと)')
-    body = Col('Message (メッセージ)')
+def send():
+    return request.form['destination']
+
+def success():
+    '''UI when the message was sent succesfully. Although, it pretends the mesasge is being sent.'''
+    pass
+
+def error():
+    '''UI for any failure.'''
+    pass
 
 def table():
+    '''Show received messages as a table'''
     data = msg.get_messages()
     table = MessageTable(data)
     return render_template('messages.html', table=table)
+
+class MessageTable(Table):
+    sender = Col('Sender (おくったひと)')
+    body = Col('Message (メッセージ)')
