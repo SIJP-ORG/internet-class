@@ -14,18 +14,18 @@ a {
 }
 
 hr {
-    border: 3px solid #ff3399;
-    margin: 10px 0;
+  border: 3px solid #ff3399;
+  margin: 10px 0;
 }
 
 input {
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: large;
-    padding: 3px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: large;
+  padding: 3px;
 }
 
 table {
-    border-collapse: collapse;
+  border-collapse: collapse;
 }
 
 th, td {
@@ -33,35 +33,10 @@ th, td {
 }
 
 .blink {
-    animation: blinker 1.5s linear infinite;
+    animation: blinker 2s linear infinite;
 }
-
 @keyframes blinker {  
-    50% { opacity: 0; }
-}
-
-.left {
-    float: left;
-}
-
-.right {
-    float: right;
-}
-
-th.send-header {
-    text-align: center;
-}
-
-td.send-label {
-    text-align: right;
-}
-
-td.send-value {
-    text-align: left;
-}
-
-#destination2 {
-    width: 200px;
+    50% { opacity: 0.2; }
 }
 
 .hidden {
@@ -76,52 +51,58 @@ td.send-value {
     grid-gap: 10px;
     align-items: center;
 }
-
 .title-img {
     max-width: 100%;
     max-height: 100%;
 }
-
 .title-string {
     color: #99004d;
-    margin: 10px;
     font-size: xx-large;
     text-align: center;
 }
 
 .send-container {
     display: grid;
-    grid-template-columns: 5fr 5fr;
-    grid-template-rows: 100px 240px 50px 50px;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 100px 240px 40px 40px;
     grid-gap: 10px;
     align-items: center;
 }
-
 .send-child:nth-child(1) {
     grid-column:1/2;
     grid-row:1/2;
     margin-right: auto;
 }
-
 .send-child:nth-child(2) {
     grid-column:2/3;
     grid-row:1/2;
     margin-left: auto;
 }
-
 .send-child:nth-child(3) {
     grid-column:1/3;
     grid-row:2/3;
 }
-
 .send-child:nth-child(4) {
     grid-column:1/3;
     grid-row:3/4;
 }
-
 .send-child:nth-child(5) {
     grid-column:1/3;
     grid-row:4/5;
+}
+
+.machine-header {
+    text-align: center;
+}
+.machine-label {
+    text-align: right;
+}
+.machine-value {
+    text-align: left;
+}
+
+#destination2 {
+    width: 200px;
 }
 
 .send-image {
@@ -132,58 +113,48 @@ td.send-value {
 
 .message-container {
     display: grid;
-    grid-template-columns: 180px 1fr 10px 140px;
+    grid-template-columns: 200px 1fr 10px 140px;
     grid-gap: 3px;
     align-items: center;
 }
-
-.error-message {
-    color: red;
-    margin-right: 20px;
-}
-
 #message-label {
     text-align: right;
 }
-
 #message-input {
     width: 100%;
 }
 
-table.msgtab {
-    width: 100%;
+.error-message {
+    color: red;
 }
 
+.received-title {
+    font-weight: bold;
+}
+
+.msgtab {
+    width: 100%;
+}
+.msghdr {
+    background-color: #e6e6e6;
+}
 .msgcell {
     border: 1px solid black;
     padding: 3px;
 }
-
 th.msgcell {
     text-align: center;
     font-weight: normal;
 }
-
 .msgip {
     width: 150px;
 }
-
 .msghost {
     width: 200px;
 }
-
-.msghdr {
-    background-color: #e6e6e6;
-}
-
 .msgrow:nth-child(even) {
     background-color: #e6fff2;
 }
-
 .msgrow:nth-child(odd) {
     background-color: #ffffe6;
-}
-
-.message-title {
-    font-weight: bold;
 }

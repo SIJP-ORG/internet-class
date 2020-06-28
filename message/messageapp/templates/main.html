@@ -18,28 +18,27 @@
       
       function refreshMessageBlock()
       {
-         $('#message-block').load("table");
+         $('#received-table').load("table");
       }
 
       function swapResultBlocks()
       {
-        var next_block = document.getElementById("next-block");
-        if (next_block != null) {
-          next_block.style.display = "inline-block";
-        }
-
         var status_block = document.getElementById("status-block");
         if (status_block != null) {
           status_block.style.display = "none";
         }
+
+        var next_block = document.getElementById("next-block");
+        if (next_block != null) {
+          next_block.style.display = "inline-block";
+        }
       }
 
-      function destination2OnChange()
+      function targetInput2OnChange()
       {
-        document.getElementById("destination-input").value =
-         document.getElementById("destination2").value;
+        document.getElementById("target-input").value =
+          document.getElementById("target-input-2").value;
       }
-
   // ]]></script>
   </head>
 
@@ -60,32 +59,32 @@
 
     <div class="send-container">
       <div class="send-child">
-        <table class="hostinfo">
+        <table>
           <tr>
-            <th colspan="2" class="send-header">You (あなた)</th>
+            <th colspan="2" class="machine-header">You (あなた)</th>
           </tr>
           <tr>
-            <td class="send-label">Host name (ホストネーム):</td>
-            <td class="send-value">{{ param.source_hostname }}</td>
+            <td class="machine-label">Host name (ホストネーム):</td>
+            <td class="machine-value">{{ param.source_hostname }}</td>
           </tr>
           <tr>
-            <td class="send-label">IP address (IPアドレス):</td>
-            <td class="send-value">{{ param.source_ipaddress }}</td>
+            <td class="machine-label">IP address (IPアドレス):</td>
+            <td class="machine-value">{{ param.source_ipaddress }}</td>
           </tr>
         </table> 
       </div>
       <div class="send-child">
-        <table class="hostinfo">
+        <table>
           <tr>
-            <th colspan="2" class="send-header">Your friend (おともだち)</th>
+            <th colspan="2" class="machine-header">Your friend (おともだち)</th>
           </tr>
           <tr>
-            <td class="send-label">Host name (ホストネーム):</td>
-            <td class="send-value"><input id="destination2" onchange="destination2OnChange()" value="{{ param.target_hostname }}" {{ param.input_disabled }}></td>
+            <td class="machine-label">Host name (ホストネーム):</td>
+            <td class="machine-value"><input id="target-input-2" onchange="targetInput2OnChange()" value="{{ param.target_hostname }}" {{ param.input_disabled }}></td>
           </tr>
           <tr>
-            <td class="send-label">IP address (IPアドレス):</td>
-            <td class="send-value">{{ param.target_ipaddress }}</td>
+            <td class="machine-label">IP address (IPアドレス):</td>
+            <td class="machine-value">{{ param.target_ipaddress }}</td>
           </tr>
         </table>
       </div>
@@ -97,7 +96,7 @@
           <div class="message-container">
             <div id="message-label">Message (メッセージ):</div>
             <div><input type="text" name="message_body" id="message-input" value="{{ param.message_body }}" {{ param.input_disabled }}></div>
-            <div><input type="text" name="target_hostname" id="destination-input" class="hidden"></div>
+            <div><input type="text" name="target_hostname" id="target-input" class="hidden"></div>
             <div><input type="submit" id="message-submit" value="Send (おくる)" {{ param.input_disabled }}></div>
           </div>
         </form>
@@ -133,8 +132,8 @@
   
     <hr>
 
-    <div class="message-title">Received Messages (じゅしんしたメッセージ)</div>
-    <div id="message-block"></div>
+    <div class="received-title">Received Messages (じゅしんしたメッセージ)</div>
+    <div id="received-table"></div>
 
   </body>
 </html>
