@@ -96,8 +96,8 @@
         <form action="{{ url_for('send') }}" method="post">
           <div class="message-container">
             <div id="message-label">Message (メッセージ):</div>
-            <div><input type="text" name="message" id="message-input" value="{{ param.message }}" {{ param.input_disabled }}></div>
-            <div><input type="text" name="destination" id="destination-input" class="hidden"></div>
+            <div><input type="text" name="message_body" id="message-input" value="{{ param.message_body }}" {{ param.input_disabled }}></div>
+            <div><input type="text" name="target_hostname" id="destination-input" class="hidden"></div>
             <div><input type="submit" id="message-submit" value="Send (おくる)" {{ param.input_disabled }}></div>
           </div>
         </form>

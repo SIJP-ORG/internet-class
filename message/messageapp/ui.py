@@ -6,7 +6,6 @@ import re
 import random
 from . import messageapi
 
-
 def root():
     '''
     Main UI to accept the request.
@@ -17,60 +16,58 @@ def root():
         'source_ipaddress': publicip,
         'target_hostname': '',
         'target_ipaddress': '',
-        'message': '',
+        'message_body': '',
         'image': url_for('static', filename='start.gif'),
     }
 
     return render_template('main.html', param=param)
 
-
 def send():
     '''
     Main send logic at the time of POST.
     '''
-    hostname = request.host
-    destination = request.form['destination']
-    message = request.form['message']
+    (hostname, publicip) = get_self()
+    target = request.form['target_hostname']
+    body = request.form['message_body']
     error = None
     target_ipaddress = ''
 
     # sanitize host name
-    destination = re.sub(r'^(http://)?(https://)?([^/]+).*$', r'\3', destination.strip())
+    target = re.sub(r'^(http://)?(https://)?([^/]+).*$', r'\3', target.strip())
 
-    if not destination:
+    if not target:
         error = "ホストネームをいれてください"
-    elif not message:
+    elif not body:
         error = "メッセージをいれてください"
 
     if not error:
         try:
-            withoutport = re.sub(r'([^:]*):.*', r'\1', destination)
-            answers = dns.resolver.query(withoutport, 'A')
+            target_withoutport = re.sub(r'([^:]*):.*', r'\1', target)
+            answers = dns.resolver.query(target_withoutport, 'A')
             target_ipaddress = answers[0].to_text()
         except dns.resolver.NXDOMAIN:
-            error = "Host name {0} is not found. (ホストネーム {0} はみつかりません)".format(withoutport)
+            error = "Host name {0} is not found. (ホストネーム {0} はみつかりません)".format(target_withoutport)
         except Exception as e:
             error = "Error: {0}".format(e)
 
     if not error:
         data = {
             'sender': hostname,
-            'body': message,
+            'body': body,
         }
-        res = requests.post('http://{0}/messages/new'.format(destination), json=data)
+        res = requests.post('http://{0}/messages/new'.format(target), json=data)
         if res.status_code != 200:
             error = "The message was not sent correctly. (メッセージはただしくおくられませんでした) " + res.reason
 
-    session['target_hostname'] = destination
+    session['target_hostname'] = target
     session['target_ipaddress'] = target_ipaddress
-    session['message'] = message
+    session['message_body'] = body
 
     if error:
         session['error'] = error
         return redirect(url_for('error'))
     else:
         return redirect(url_for('success'))
-
 
 def success():
     '''
@@ -84,13 +81,12 @@ def success():
         'source_ipaddress': publicip,
         'target_hostname': session['target_hostname'],
         'target_ipaddress': session['target_ipaddress'],
-        'message': session['message'],
+        'message_body': session['message_body'],
         # Random parameter needs to be added, otherwise FF will not render it at the second load.
         'image': url_for('static', filename='send.gif') + '?x=' + str(random.randint(1,10000)),
     }
 
     return render_template('main.html', param=param)
-
 
 def error():
     '''
@@ -104,21 +100,12 @@ def error():
         'source_ipaddress': publicip,
         'target_hostname': session['target_hostname'],
         'target_ipaddress': session['target_ipaddress'],
-        'message': session['message'],
+        'message_body': session['message_body'],
         'error': session['error'],
         'image': url_for('static', filename='start.gif'),
     }
 
     return render_template('main.html', param=param)
-
-
-def get_self():
-    '''
-    Extract hostname from 'request' and retrieve EC2 public IP address.
-    '''
-    hostname = request.host
-    publicip = urllib.request.urlopen("http://169.254.169.254/latest/meta-data/public-ipv4").read().decode('ascii')
-    return (hostname, publicip)
 
 def table():
     '''
@@ -135,3 +122,11 @@ def table():
         })
 
     return render_template('messages.html', data=data)
+
+def get_self():
+    '''
+    Extract hostname from 'request' and retrieve EC2 public IP address.
+    '''
+    hostname = request.host
+    publicip = urllib.request.urlopen("http://169.254.169.254/latest/meta-data/public-ipv4").read().decode('ascii')
+    return (hostname, publicip)
