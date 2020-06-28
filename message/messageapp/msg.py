@@ -11,9 +11,9 @@ def sendnew():
     '''API to send a new message by the caller'''
     data = json.loads(request.data)
     ip = request.remote_addr
-    hostname = "temp"
+    hostname = data['srchost'] or 'unknown'
     arrival = datetime.datetime.now()
-    body = data['msg']
+    body = data['msg'] or ''
 
     con = db.get_db()
     cur = con.cursor()
@@ -31,8 +31,9 @@ def getall():
     return jsonify(get_messages())
 
 def get_messages():
-    '''Internal method to retrieve the messages past 1 hour in.'''
+    '''Internal method to retrieve last 100 messages.'''
     return db.get_db().execute(
-        'select ip, hostname, arrival, body'
+        'select ip, hostname, body'
         ' from msg'
+        ' order by arrival desc limit 100'
     ).fetchall()

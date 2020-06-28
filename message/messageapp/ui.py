@@ -4,9 +4,15 @@ from . import msg
 from flask_table import Table, Col
 import dns.resolver
 import re
+import urllib.request
+
 
 def root():
+    hostname = request.host
+    publicip = urllib.request.urlopen("http://169.254.169.254/latest/meta-data/public-ipv4").read().decode('ascii')
     param = {
+        'srchost': hostname,
+        'srcip': publicip,
         'desthost': '',
         'destip': '',
         'message': '',
@@ -16,6 +22,7 @@ def root():
     return render_template('main.html', param=param)
 
 def send():
+    hostname = request.host
     destination = request.form['destination']
     message = request.form['message']
     error = None
@@ -42,6 +49,7 @@ def send():
     if not error:
         data = {
             'msg': message,
+            'srchost': hostname,
         }
         res = requests.post('http://{0}/msg/sendnew'.format(destination), json=data)
         if res.status_code != 200:
@@ -58,9 +66,13 @@ def send():
         return redirect(url_for('success'))
 
 def success():
+    hostname = request.host
+    publicip = urllib.request.urlopen("http://169.254.169.254/latest/meta-data/public-ipv4").read().decode('ascii')
     param = {
         'input_disabled': 'disabled',
         'show_result': True,
+        'srchost': hostname,
+        'srcip': publicip,
         'desthost': session['desthost'],
         'destip': session['destip'],
         'message': session['message'],
@@ -71,9 +83,13 @@ def success():
 
 def error():
     '''UI for any failure.'''
+    hostname = request.host
+    publicip = urllib.request.urlopen("http://169.254.169.254/latest/meta-data/public-ipv4").read().decode('ascii')
     param = {
         'input_disabled': 'disabled',
         'show_error': True,
+        'srchost': hostname,
+        'srcip': publicip,
         'desthost': session['desthost'],
         'destip': session['destip'],
         'message': session['message'],
@@ -86,10 +102,10 @@ def error():
 def table():
     '''Show received messages as a table'''
     data = msg.get_messages()
-    table = MessageTable(data)
-    return render_template('messages.html', table=table)
-
-class MessageTable(Table):
-    ip = Col('IP address (IPアドレス)')
-    hostname = Col('Hostname (ホストネーム)')
-    body = Col('Message (メッセージ)')
+    if len(data) == 0:
+        data.append({
+            'ip': '',
+            'hostname': '',
+            'body': 'No messages. (メッセージはありません)'
+        })
+    return render_template('messages.html', data=data)

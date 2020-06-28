@@ -71,7 +71,7 @@ td.send-value {
 
 .send-container {
     display: grid;
-    grid-template-columns: 4fr 6fr;
+    grid-template-columns: 5fr 5fr;
     grid-template-rows: 100px 240px 50px 50px;
     grid-gap: 10px;
     align-items: center;

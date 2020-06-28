@@ -1,1 +1,14 @@
-{{table}}
+<table>
+    <tr>
+        <th>IP address (IPアドレス)</th>
+        <th>Host name (ホストネーム)</th>
+        <th>Message (メッセージ)</th>
+    </tr>
+    {% for entry in data %}
+    <tr>
+        <td>{{ entry['ip'] }}</td>
+        <td>{{ entry['hostname'] }}</td>
+        <td>{{ entry['body'] }}</td>
+    </tr>
+    {% endfor %}
+</table>

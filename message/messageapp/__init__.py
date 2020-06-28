@@ -1,8 +1,8 @@
 import os
-from flask import Flask, redirect, url_for
+from flask import Flask, redirect, url_for, request
 
 from . import db, msg, custom_json_encoder, ui
-
+import urllib.request
 
 def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
@@ -38,7 +38,11 @@ def create_app(test_config=None):
     # Test function
     @app.route('/hello')
     def hello():
-        return 'Hello. I am alive.'
+        publicip = urllib.request.urlopen("http://169.254.169.254/latest/meta-data/public-ipv4").read()
+        hostname = request.host
+        return hostname
+
+        #return 'Hello. I am alive.'
 
     return app
 
