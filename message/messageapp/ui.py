@@ -5,6 +5,7 @@ from flask_table import Table, Col
 import dns.resolver
 import re
 import urllib.request
+import random
 
 
 def root():
@@ -76,7 +77,8 @@ def success():
         'desthost': session['desthost'],
         'destip': session['destip'],
         'message': session['message'],
-        'image': url_for('static', filename='send.gif'),
+        # Random parameter needs to be added, otherwise FF will not render it at the second load.
+        'image': url_for('static', filename='send.gif') + '?x=' + str(random.randint(1,10000)),
     }
 
     return render_template('main.html', param=param)
