@@ -30,6 +30,7 @@
 
   <body>
     <div class="title-container">
+      <div></div>
       <div><img class="title-img" src="{{ url_for('static', filename='ninja-fish-1.jpg') }}"></div>
       <div>
         <div class="title-string">
@@ -37,6 +38,7 @@
         </div>
       </div>
       <div><img class="title-img" src="{{ url_for('static', filename='ninja-fish-2.jpg') }}"> </div>
+      <div></div>
     </div>
 
     <hr>
@@ -45,8 +47,7 @@
       <div class="send-child">
         <table class="hostinfo">
           <tr>
-            <th class="send-header">You (あなた)</th>
-            <th></th>
+            <th colspan="2" class="send-header">You (あなた)</th>
           </tr>
           <tr>
             <td class="send-label">Host name (ホストネーム):</td>
@@ -61,8 +62,7 @@
       <div class="send-child">
         <table class="hostinfo">
           <tr>
-            <th class="send-header">Your friend (おともだち)</th>
-            <th></th>
+            <th colspan="2" class="send-header">Your friend (おともだち)</th>
           </tr>
           <tr>
             <td class="send-label">Host name (ホストネーム):</td>
@@ -78,18 +78,19 @@
         <img class='send-image' src="{{ url_for('static', filename='start.gif') }}">
       </div>
       <div class="send-child">
-        <div>
-          <form action="/send" method="post">
-            <div>Message (メッセージ):
-            <input type="text" name="message" id="message-input" required>
-            <input type="text" name="destination" id="destination-input" class="hidden">
-            <input type="submit" id="message-submit" value="Send (おくる)">
-            </div>
-          </form>
-        </div>
-        <div>Error message here.</div>
-    </div>
-    </div>
+        <form action="/send" method="post">
+          <div class="message-container">
+            <div id="message-label">Message (メッセージ):</div>
+            <div><input type="text" name="message" id="message-input" required></div>
+            <div><input type="text" name="destination" id="destination-input" class="hidden"></div>
+            <div><input type="submit" id="message-submit" value="Send (おくる)"></div>
+          </div>
+        </form>
+      </div>
+      <div class="send-child">
+        Error message.
+      </div>
+      </div>
   
     <hr>
     <br>
