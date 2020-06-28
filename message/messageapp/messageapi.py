@@ -4,10 +4,7 @@ import sqlite3
 import datetime
 from . import db
 
-def test():
-    return 'it works'
-
-def sendnew():
+def send_new():
     '''API to send a new message by the caller'''
     data = json.loads(request.data)
     ip = request.remote_addr
@@ -26,11 +23,11 @@ def sendnew():
     response = {'id': rowid, 'echo': data['msg']}
     return jsonify(response)
 
-def getall():
+def get_messages():
     '''API to return all messages'''
     return jsonify(get_messages())
 
-def get_messages():
+def get_last100_messages():
     '''Internal method to retrieve last 100 messages.'''
     return db.get_db().execute(
         'select ip, hostname, body'

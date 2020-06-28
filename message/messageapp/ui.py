@@ -1,14 +1,16 @@
-from flask import Blueprint, flash, g, redirect, render_template, request, session, url_for
+from flask import render_template, request, session, redirect, url_for
 import requests
-from . import msg
-from flask_table import Table, Col
+import urllib.request
 import dns.resolver
 import re
-import urllib.request
 import random
+from . import messageapi
 
 
 def root():
+    '''
+    Main UI to accept the request.
+    '''
     hostname = request.host
     publicip = urllib.request.urlopen("http://169.254.169.254/latest/meta-data/public-ipv4").read().decode('ascii')
     param = {
@@ -22,7 +24,11 @@ def root():
 
     return render_template('main.html', param=param)
 
+
 def send():
+    '''
+    Main send logic at the time of POST.
+    '''
     hostname = request.host
     destination = request.form['destination']
     message = request.form['message']
@@ -52,7 +58,7 @@ def send():
             'msg': message,
             'srchost': hostname,
         }
-        res = requests.post('http://{0}/msg/sendnew'.format(destination), json=data)
+        res = requests.post('http://{0}/messages/new'.format(destination), json=data)
         if res.status_code != 200:
             error = "The message was not sent correctly. (メッセージはただしくおくられませんでした) " + res.reason
 
@@ -66,7 +72,11 @@ def send():
     else:
         return redirect(url_for('success'))
 
+
 def success():
+    '''
+    Result UI at a success.
+    '''
     hostname = request.host
     publicip = urllib.request.urlopen("http://169.254.169.254/latest/meta-data/public-ipv4").read().decode('ascii')
     param = {
@@ -85,8 +95,9 @@ def success():
 
 
 def error():
-    '''UI for any failure.'''
-
+    '''
+    Result UI at a failure.
+    '''
     hostname = request.host
     publicip = urllib.request.urlopen("http://169.254.169.254/latest/meta-data/public-ipv4").read().decode('ascii')
     param = {
@@ -105,9 +116,10 @@ def error():
 
 
 def table():
-    '''Show received messages as a table'''
-
-    data = msg.get_messages()
+    '''
+    Show received messages as a table
+    '''
+    data = messageapi.get_last100_messages()
 
     # Message for the first time access.
     if len(data) == 0:

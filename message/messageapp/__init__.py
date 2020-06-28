@@ -1,13 +1,13 @@
 import os
 from flask import Flask, redirect, url_for, request
 
-from . import db, msg, custom_json_encoder, ui
+from . import db, messageapi, custom_json_encoder, ui
 import urllib.request
 
 def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_mapping(
-        SECRET_KEY='dev',
+        SECRET_KEY='O2B6RfJhphOkjWGthbdqsQ',
         DATABASE=os.path.join(app.instance_path, 'messageapp.sqlite'),
         SEND_FILE_MAX_AGE_DEFAULT=0,
     )
@@ -24,25 +24,24 @@ def create_app(test_config=None):
     # intiialize database module
     db.init_app(app)
 
-    # define routes
+    # UI
     app.add_url_rule('/', view_func=ui.root, methods=['GET'])
     app.add_url_rule('/send', view_func=ui.send, methods=['POST'])
     app.add_url_rule('/result', view_func=ui.success, methods=['GET'])
     app.add_url_rule('/error', view_func=ui.error, methods=['GET'])
     app.add_url_rule('/table', view_func=ui.table, methods=['GET'])
-    
-    app.add_url_rule('/msg/sendnew', view_func=msg.sendnew, methods=['POST'])
-    app.add_url_rule('/msg', view_func=msg.getall, methods=['GET'])   
+    # util UI
     app.add_url_rule('/init-db', view_func=db.init_db, methods=['GET'])
+
+    # API
+    app.add_url_rule('/messages/new', view_func=messageapi.send_new, methods=['POST'])
+    # dev only
+    app.add_url_rule('/messages', view_func=messageapi.get_messages, methods=['GET'])
 
     # Test function
     @app.route('/hello')
     def hello():
-        publicip = urllib.request.urlopen("http://169.254.169.254/latest/meta-data/public-ipv4").read()
-        hostname = request.host
-        return hostname
-
-        #return 'Hello. I am alive.'
+        return 'Hello. I am alive.'
 
     return app
 
