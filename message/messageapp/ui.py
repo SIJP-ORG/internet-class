@@ -55,8 +55,8 @@ def send():
 
     if not error:
         data = {
-            'msg': message,
-            'srchost': hostname,
+            'sender': hostname,
+            'body': message,
         }
         res = requests.post('http://{0}/messages/new'.format(destination), json=data)
         if res.status_code != 200:
