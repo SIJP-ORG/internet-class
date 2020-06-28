@@ -13,8 +13,7 @@
       {
           refreshMessageBlock();
           setInterval("refreshMessageBlock();", 5000);
-
-          setTimeout("swapResultBlocks();", 10000);
+          setTimeout("swapResultBlocks();", 1000);
       }
       
       function refreshMessageBlock()
@@ -109,14 +108,19 @@
           IP address is found. The message is being sent. (IPアドレスがみつかりました。メッセージをおくっています)
         </div>
         <div class="next-container" id="next-block" style="display:none;">
-          <div class="success-message left">Message was sent successfully. (メッセージがおくられました)</div>
-          <div class="left">
-            <form action="{{ url_for('root') }}">
-              <input type="submit" value="Next message (つぎのメッセージ)">
-            </form>
-          </div>
+          <table>
+            <tr>
+              <td class="next-cell">Message was sent successfully. (メッセージがおくられました)</td>
+              <td class="next-cell">
+                <form action="{{ url_for('root') }}">
+                  <input type="submit" value="Next message (つぎのメッセージ)">
+                </form>
+              </td>
+            </tr>
+          </table>
         </div>
-        {% endif %}
+      </div>
+      {% endif %}
         {% if param.error: %}
         <div class="error-container">
           <div class="error-message left">{{ param.error }}</div>
@@ -131,9 +135,8 @@
     </div>
   
     <hr>
-    <br>
-    Received Messages (じゅしんしたメッセージ)
-    <br>
+
+    <div class="message-title">Received Messages (じゅしんしたメッセージ)</div>
     <div id="message-block"></div>
 
   </body>

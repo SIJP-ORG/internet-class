@@ -28,6 +28,22 @@ table {
     border-collapse: collapse;
 }
 
+.blink {
+    animation: blinker 1.5s linear infinite;
+}
+
+@keyframes blinker {  
+    50% { opacity: 0; }
+}
+
+.left {
+    float: left;
+}
+
+.right {
+    float: right;
+}
+
 th.send-header {
     text-align: center;
 }
@@ -117,8 +133,8 @@ td.send-value {
     align-items: center;
 }
 
-.success-message {
-    margin-right: 20px;
+.next-cell {
+    padding: 10px;
 }
 
 .error-message {
@@ -134,25 +150,40 @@ td.send-value {
     width: 100%;
 }
 
-.flash {
-    margin: 1em 0;
-    padding: 1em;
-    background: #cae6f6;
-    border: 1px solid #377ba8;
+table.msgtab {
+    width: 100%;
 }
 
-.blink {
-    animation: blinker 1.5s linear infinite;
+.msgcell {
+    border: 1px solid black;
+    padding: 3px;
 }
 
-@keyframes blinker {  
-    50% { opacity: 0; }
+th.msgcell {
+    text-align: center;
+    font-weight: normal;
 }
 
-.left {
-    float: left;
+.msgip {
+    width: 150px;
 }
 
-.right {
-    float: right;
+.msghost {
+    width: 200px;
+}
+
+.msghdr {
+    background-color: #e6e6e6;
+}
+
+.msgrow:nth-child(even) {
+    background-color: #e6fff2;
+}
+
+.msgrow:nth-child(odd) {
+    background-color: #ffffe6;
+}
+
+.message-title {
+    font-weight: bold;
 }
