@@ -2,45 +2,86 @@ from flask import Blueprint, flash, g, redirect, render_template, request, sessi
 import requests
 from . import msg
 from flask_table import Table, Col
+import dns.resolver
+import re
 
 def root():
-    if request.method == 'GET':
-        param = {
-            'destip': '',
-        }
+    param = {
+        'desthost': '',
+        'destip': '',
+        'message': '',
+        'image': url_for('static', filename='start.gif'),
+    }
 
-        return render_template('main.html', param=param)
-
-    if request.method == 'POST':
-        destination = request.form['destination']
-        message = request.form['message']
-        error = None
-
-        # TODO -- shorter timeout
-        res = requests.post(
-            'http://{0}/msg/sendnew'.format(destination),
-            json={'msg': message} )
-
-        if res.status_code == 200:
-            result_message = 'The message was sent successfully.'
-        else:
-
-            result_message = 'The message was not sent correctly. ' + res.reason
-            flash(result_message)
-
-        result = {'msg': result_message}
-        return render_template('main.html', result = result)
+    return render_template('main.html', param=param)
 
 def send():
-    return request.form['destination']
+    destination = request.form['destination']
+    message = request.form['message']
+    error = None
+    destip = ''
+
+    # sanitize host name
+    destination = re.sub(r'^(http://)?(https://)?([^/]+).*$', r'\3', destination.strip())
+
+    if not destination:
+        error = "ホストネームがただしくありません"
+    elif not message:
+        error = "メッセージをいれてください"
+
+    if not error:
+        try:
+            withoutport = re.sub(r'([^:]*):.*', r'\1', destination)
+            answers = dns.resolver.query(withoutport, 'A')
+            destip = answers[0].to_text()
+        except dns.resolver.NXDOMAIN:
+            error = "Host name {0} is not found. (ホストネーム {0} はみつかりません)".format(withoutport)
+        except Exception as e:
+            error = "Error: {0}".format(e)
+
+    if not error:
+        data = {
+            'msg': message,
+        }
+        res = requests.post('http://{0}/msg/sendnew'.format(destination), json=data)
+        if res.status_code != 200:
+            error = "The message was not sent correctly. (メッセージはただしくおくられませんでした) " + res.reason
+
+    session['desthost'] = destination
+    session['destip'] = destip
+    session['message'] = message
+
+    if error:
+        session['error'] = error
+        return redirect(url_for('error'))
+    else:
+        return redirect(url_for('success'))
 
 def success():
-    '''UI when the message was sent succesfully. Although, it pretends the mesasge is being sent.'''
-    pass
+    param = {
+        'input_disabled': 'disabled',
+        'show_result': True,
+        'desthost': session['desthost'],
+        'destip': session['destip'],
+        'message': session['message'],
+        'image': url_for('static', filename='send.gif'),
+    }
+
+    return render_template('main.html', param=param)
 
 def error():
     '''UI for any failure.'''
-    pass
+    param = {
+        'input_disabled': 'disabled',
+        'show_error': True,
+        'desthost': session['desthost'],
+        'destip': session['destip'],
+        'message': session['message'],
+        'error': session['error'],
+        'image': url_for('static', filename='start.gif'),
+    }
+
+    return render_template('main.html', param=param)
 
 def table():
     '''Show received messages as a table'''
@@ -49,5 +90,6 @@ def table():
     return render_template('messages.html', table=table)
 
 class MessageTable(Table):
-    sender = Col('Sender (おくったひと)')
+    ip = Col('IP address (IPアドレス)')
+    hostname = Col('Hostname (ホストネーム)')
     body = Col('Message (メッセージ)')

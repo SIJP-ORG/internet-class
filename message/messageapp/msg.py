@@ -10,13 +10,16 @@ def test():
 def sendnew():
     '''API to send a new message by the caller'''
     data = json.loads(request.data)
+    ip = request.remote_addr
+    hostname = "temp"
+    arrival = datetime.datetime.now()
+    body = data['msg']
 
     con = db.get_db()
     cur = con.cursor()
     cur.execute(
-        'insert into msg (sender, arrival, body) values (?, ?, ?)',
-        (request.remote_addr, datetime.datetime.now(), data['msg'])
-    )
+        'insert into msg (ip, hostname, arrival, body) values (?, ?, ?, ?)',
+        (ip, hostname, arrival, body))
     rowid = cur.lastrowid
     con.commit()
 
@@ -25,16 +28,11 @@ def sendnew():
 
 def getall():
     '''API to return all messages'''
-    msgs = db.get_db().execute(
-        'select id, sender, arrival, body'
-        ' from msg'
-    ).fetchall()
-
-    return jsonify(msgs)
+    return jsonify(get_messages())
 
 def get_messages():
-    '''Retrieve the latest 100 messages in reverse chronological order.'''
+    '''Internal method to retrieve the messages past 1 hour in.'''
     return db.get_db().execute(
-        'select sender, body'
+        'select ip, hostname, arrival, body'
         ' from msg'
     ).fetchall()

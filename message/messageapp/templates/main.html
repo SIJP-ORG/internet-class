@@ -7,17 +7,32 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
     <script type="text/javascript">// <![CDATA[
-      window.onload = setupRefresh;
+      window.onload = setupOperations;
   
-      function setupRefresh()
+      function setupOperations()
       {
-          refreshBlock();
-          setInterval("refreshBlock();",3000);
+          refreshMessageBlock();
+          setInterval("refreshMessageBlock();", 5000);
+
+          setTimeout("swapResultBlocks();", 10000);
       }
       
-      function refreshBlock()
+      function refreshMessageBlock()
       {
-         $('#messagetable').load("table");
+         $('#message-block').load("table");
+      }
+
+      function swapResultBlocks()
+      {
+        var next_block = document.getElementById("next-block");
+        if (next_block != null) {
+          next_block.style.display = "inline-block";
+        }
+
+        var status_block = document.getElementById("status-block");
+        if (status_block != null) {
+          status_block.style.display = "none";
+        }
       }
 
       function destination2OnChange()
@@ -25,6 +40,7 @@
         document.getElementById("destination-input").value =
          document.getElementById("destination2").value;
       }
+
   // ]]></script>
   </head>
 
@@ -66,7 +82,7 @@
           </tr>
           <tr>
             <td class="send-label">Host name (ホストネーム):</td>
-            <td class="send-value"><input id="destination2" onchange="destination2OnChange()"></td>
+            <td class="send-value"><input id="destination2" onchange="destination2OnChange()" value="{{ param.desthost }}" {{ param.input_disabled }}></td>
           </tr>
           <tr>
             <td class="send-label">IP address (IPアドレス):</td>
@@ -75,28 +91,50 @@
         </table>
       </div>
       <div class="send-child">
-        <img class='send-image' src="{{ url_for('static', filename='start.gif') }}">
+        <img class='send-image' src="{{ param.image }}">
       </div>
       <div class="send-child">
-        <form action="/send" method="post">
+        <form action="{{ url_for('send') }}" method="post">
           <div class="message-container">
             <div id="message-label">Message (メッセージ):</div>
-            <div><input type="text" name="message" id="message-input" required></div>
+            <div><input type="text" name="message" id="message-input" value="{{ param.message }}" {{ param.input_disabled }}></div>
             <div><input type="text" name="destination" id="destination-input" class="hidden"></div>
-            <div><input type="submit" id="message-submit" value="Send (おくる)"></div>
+            <div><input type="submit" id="message-submit" value="Send (おくる)" {{ param.input_disabled }}></div>
           </div>
         </form>
       </div>
       <div class="send-child">
-        Error message.
+        {% if param.show_result: %}
+        <div class="blink" id="status-block">
+          IP address is found. The message is being sent. (IPアドレスがみつかりました。メッセージをおくっています)
+        </div>
+        <div class="next-container" id="next-block" style="display:none;">
+          <div class="success-message left">Message was sent successfully. (メッセージがおくられました)</div>
+          <div class="left">
+            <form action="{{ url_for('root') }}">
+              <input type="submit" value="Next message (つぎのメッセージ)">
+            </form>
+          </div>
+        </div>
+        {% endif %}
+        {% if param.error: %}
+        <div class="error-container">
+          <div class="error-message left">{{ param.error }}</div>
+          <div class="left">
+            <form action="{{ url_for('root') }}">
+              <input type="submit" value="Start over (やりなおす)">
+            </form>
+          </div>
+        </div>
+        {% endif %}
       </div>
-      </div>
+    </div>
   
     <hr>
     <br>
     Received Messages (じゅしんしたメッセージ)
     <br>
-    <div id="messagetable"></div>
+    <div id="message-block"></div>
 
   </body>
 </html>

@@ -24,7 +24,6 @@ input {
     padding: 3px;
 }
 
-
 table {
     border-collapse: collapse;
 }
@@ -73,7 +72,7 @@ td.send-value {
 .send-container {
     display: grid;
     grid-template-columns: 4fr 6fr;
-    grid-template-rows: 2fr 240px 1fr 1fr;
+    grid-template-rows: 100px 240px 50px 50px;
     grid-gap: 10px;
     align-items: center;
 }
@@ -100,6 +99,11 @@ td.send-value {
     grid-row:3/4;
 }
 
+.send-child:nth-child(5) {
+    grid-column:1/3;
+    grid-row:4/5;
+}
+
 .send-image {
     display: block;
     margin-left: auto;
@@ -111,6 +115,15 @@ td.send-value {
     grid-template-columns: 180px 1fr 10px 140px;
     grid-gap: 3px;
     align-items: center;
+}
+
+.success-message {
+    margin-right: 20px;
+}
+
+.error-message {
+    color: red;
+    margin-right: 20px;
 }
 
 #message-label {
@@ -128,26 +141,18 @@ td.send-value {
     border: 1px solid #377ba8;
 }
 
-.loader {
-    border: 16px solid #f3f3f3; /* Light grey */
-    border-top: 16px solid #3498db; /* Blue */
-    border-radius: 50%;
-    width: 120px;
-    height: 120px;
-    margin-left: auto;
-    margin-right: auto;
-    -webkit-animation: spin 2s linear infinite; /* Safari */
-    animation: spin 2s linear infinite;
-    display:none;
-  }
-  
-/* Safari */
-@-webkit-keyframes spin {
-    0% { -webkit-transform: rotate(0deg); }
-    100% { -webkit-transform: rotate(360deg); }
+.blink {
+    animation: blinker 1.5s linear infinite;
 }
 
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+@keyframes blinker {  
+    50% { opacity: 0; }
+}
+
+.left {
+    float: left;
+}
+
+.right {
+    float: right;
 }
