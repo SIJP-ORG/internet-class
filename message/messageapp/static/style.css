@@ -28,6 +28,10 @@ table {
     border-collapse: collapse;
 }
 
+th, td {
+    padding: 5px;
+}
+
 .blink {
     animation: blinker 1.5s linear infinite;
 }
@@ -131,10 +135,6 @@ td.send-value {
     grid-template-columns: 180px 1fr 10px 140px;
     grid-gap: 3px;
     align-items: center;
-}
-
-.next-cell {
-    padding: 10px;
 }
 
 .error-message {

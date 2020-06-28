@@ -32,7 +32,7 @@ def send():
     destination = re.sub(r'^(http://)?(https://)?([^/]+).*$', r'\3', destination.strip())
 
     if not destination:
-        error = "ホストネームがただしくありません"
+        error = "ホストネームをいれてください"
     elif not message:
         error = "メッセージをいれてください"
 
@@ -81,8 +81,10 @@ def success():
 
     return render_template('main.html', param=param)
 
+
 def error():
     '''UI for any failure.'''
+
     hostname = request.host
     publicip = urllib.request.urlopen("http://169.254.169.254/latest/meta-data/public-ipv4").read().decode('ascii')
     param = {
@@ -99,13 +101,18 @@ def error():
 
     return render_template('main.html', param=param)
 
+
 def table():
     '''Show received messages as a table'''
+
     data = msg.get_messages()
+
+    # Message for the first time access.
     if len(data) == 0:
         data.append({
             'ip': '',
             'hostname': '',
             'body': 'No messages. (メッセージはありません)'
         })
+
     return render_template('messages.html', data=data)
