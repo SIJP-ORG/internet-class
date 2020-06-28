@@ -11,13 +11,12 @@ def root():
     '''
     Main UI to accept the request.
     '''
-    hostname = request.host
-    publicip = urllib.request.urlopen("http://169.254.169.254/latest/meta-data/public-ipv4").read().decode('ascii')
+    (hostname, publicip) = get_self()
     param = {
-        'srchost': hostname,
-        'srcip': publicip,
-        'desthost': '',
-        'destip': '',
+        'source_hostname': hostname,
+        'source_ipaddress': publicip,
+        'target_hostname': '',
+        'target_ipaddress': '',
         'message': '',
         'image': url_for('static', filename='start.gif'),
     }
@@ -33,7 +32,7 @@ def send():
     destination = request.form['destination']
     message = request.form['message']
     error = None
-    destip = ''
+    target_ipaddress = ''
 
     # sanitize host name
     destination = re.sub(r'^(http://)?(https://)?([^/]+).*$', r'\3', destination.strip())
@@ -47,7 +46,7 @@ def send():
         try:
             withoutport = re.sub(r'([^:]*):.*', r'\1', destination)
             answers = dns.resolver.query(withoutport, 'A')
-            destip = answers[0].to_text()
+            target_ipaddress = answers[0].to_text()
         except dns.resolver.NXDOMAIN:
             error = "Host name {0} is not found. (ホストネーム {0} はみつかりません)".format(withoutport)
         except Exception as e:
@@ -62,8 +61,8 @@ def send():
         if res.status_code != 200:
             error = "The message was not sent correctly. (メッセージはただしくおくられませんでした) " + res.reason
 
-    session['desthost'] = destination
-    session['destip'] = destip
+    session['target_hostname'] = destination
+    session['target_ipaddress'] = target_ipaddress
     session['message'] = message
 
     if error:
@@ -77,15 +76,14 @@ def success():
     '''
     Result UI at a success.
     '''
-    hostname = request.host
-    publicip = urllib.request.urlopen("http://169.254.169.254/latest/meta-data/public-ipv4").read().decode('ascii')
+    (hostname, publicip) = get_self()
     param = {
         'input_disabled': 'disabled',
         'show_result': True,
-        'srchost': hostname,
-        'srcip': publicip,
-        'desthost': session['desthost'],
-        'destip': session['destip'],
+        'source_hostname': hostname,
+        'source_ipaddress': publicip,
+        'target_hostname': session['target_hostname'],
+        'target_ipaddress': session['target_ipaddress'],
         'message': session['message'],
         # Random parameter needs to be added, otherwise FF will not render it at the second load.
         'image': url_for('static', filename='send.gif') + '?x=' + str(random.randint(1,10000)),
@@ -98,15 +96,14 @@ def error():
     '''
     Result UI at a failure.
     '''
-    hostname = request.host
-    publicip = urllib.request.urlopen("http://169.254.169.254/latest/meta-data/public-ipv4").read().decode('ascii')
+    (hostname, publicip) = get_self()
     param = {
         'input_disabled': 'disabled',
         'show_error': True,
-        'srchost': hostname,
-        'srcip': publicip,
-        'desthost': session['desthost'],
-        'destip': session['destip'],
+        'source_hostname': hostname,
+        'source_ipaddress': publicip,
+        'target_hostname': session['target_hostname'],
+        'target_ipaddress': session['target_ipaddress'],
         'message': session['message'],
         'error': session['error'],
         'image': url_for('static', filename='start.gif'),
@@ -114,6 +111,14 @@ def error():
 
     return render_template('main.html', param=param)
 
+
+def get_self():
+    '''
+    Extract hostname from 'request' and retrieve EC2 public IP address.
+    '''
+    hostname = request.host
+    publicip = urllib.request.urlopen("http://169.254.169.254/latest/meta-data/public-ipv4").read().decode('ascii')
+    return (hostname, publicip)
 
 def table():
     '''

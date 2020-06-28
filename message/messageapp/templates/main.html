@@ -66,11 +66,11 @@
           </tr>
           <tr>
             <td class="send-label">Host name (ホストネーム):</td>
-            <td class="send-value">{{ param.srchost }}</td>
+            <td class="send-value">{{ param.source_hostname }}</td>
           </tr>
           <tr>
             <td class="send-label">IP address (IPアドレス):</td>
-            <td class="send-value">{{ param.srcip }}</td>
+            <td class="send-value">{{ param.source_ipaddress }}</td>
           </tr>
         </table> 
       </div>
@@ -81,11 +81,11 @@
           </tr>
           <tr>
             <td class="send-label">Host name (ホストネーム):</td>
-            <td class="send-value"><input id="destination2" onchange="destination2OnChange()" value="{{ param.desthost }}" {{ param.input_disabled }}></td>
+            <td class="send-value"><input id="destination2" onchange="destination2OnChange()" value="{{ param.target_hostname }}" {{ param.input_disabled }}></td>
           </tr>
           <tr>
             <td class="send-label">IP address (IPアドレス):</td>
-            <td class="send-value">{{ param.destip }}</td>
+            <td class="send-value">{{ param.target_ipaddress }}</td>
           </tr>
         </table>
       </div>
