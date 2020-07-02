@@ -1,17 +1,107 @@
-{% extends 'base.html' %}
+<!doctype html>
+<html>
+  <head>
+    <title>DNS app on Ninja.Fish</title>
+    <meta name="robots" content="noindex">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
-{% block header %}
-  <h1>{% block title %}Let's name your IP address (あなたのIPアドレスに、なまえをつけましょう){% endblock %}</h1>
-{% endblock %}
+    <script type="text/javascript">// <![CDATA[
+      
+      function loading()
+          {
+            var ipaddress_input = document.getElementById("ipaddress-input");
+            if (ipaddress_input != null) {
+              ipaddress_input.readOnly = true;
+            }
 
-{% block content %}
-  <form method="post">
-    <label for="ipaddress">IP address (IPアドレス)</label>
-    <input name="ipaddress" id="ipaddress" required>
-    <label for="servername">Name (なまえ)</label>
-    <div><input name="servername" id="servername" class="servername" required>.ninja.fish</div>
-    <div><input type="submit" value="Register (とうろく)" onclick="loading();"> This takes 1 to 2 minutes. (1~2分かかります)</div>
-  </form>
+            var hostname_input = document.getElementById("hostname-input");
+            if (hostname_input != null) {
+              hostname_input.readOnly = true;
+            }
 
-  <div>TODO: List of existing entries.</div>
-{% endblock %}
+            var submit_button = document.getElementById("submit-button");
+            if (submit_button != null) {
+              submit_button.disabled = true;
+            }
+
+            var submit_button = document.getElementById("submit-button");
+            if (submit_button != null) {
+              submit_button.disabled = true;
+            }
+
+            var progress_block = document.getElementById("progress-block");
+            if (progress_block != null) {
+              progress_block.style.display = "block";
+            }
+
+            var error_block = document.getElementById("error-block");
+            if (error_block != null) {
+              error_block.style.display = "none";
+            }
+          }
+  // ]]></script>
+  </head>
+
+  <body>
+    <div class="title-container">
+      <div></div>
+      <div><img class="title-img" src="{{ url_for('static', filename='ninja-fish-1.jpg') }}"></div>
+      <div>
+        <div class="title-string">
+          Let's name your IP address<br>(あなたのIPアドレスに、なまえをつけましょう)
+        </div>
+      </div>
+      <div></div>
+    </div>
+
+    <hr>
+
+    <div class="send-container">
+      <div class="send-child center">
+        <form action="{{ url_for('register') }}" method="post">
+          <table>
+            <tr>
+              <td class="entry-label">IP address (IPアドレス):</td>
+              <td class="entry-value"><input name="ipaddress" id="ipaddress-input" value="{{ param.ipaddress }}"></td>
+            </tr>
+            <tr>
+              <td class="entry-label">Name (なまえ):</td>
+              <td class="entry-value">
+                <span>
+                  <input name="hostname" id="hostname-input" value="{{ param.hostname }}">
+                </span>
+                <span>
+                  .{{ param.domain }}
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2" class="submit-container">
+                <input type="submit" id="submit-button" value="Register (とうろく)" onclick="loading();">
+              </td>
+            </tr>
+          </table>
+        </form>
+      </div>
+      <div class="send-child center">
+        <div class="blink" id="progress-block" style="display: none;">
+          Registering. It takes 1 to 2 minutes. (とうろくちゅうです。１～２ふんかかります)
+        </div>
+        {% if param.error: %}
+        <div class="error-container" id="error-block">
+          <table>
+            <td class="error-message">{{ param.error }}</td>
+          </table>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <hr>
+
+    <div class="hosts-title">Registered Names (とうろくされたなまえ)</div>
+    <div id="hosts-table"></div>
+
+  </body>
+</html>

@@ -32,12 +32,21 @@ th, td {
     padding: 5px;
 }
 
+/* https://stackoverflow.com/a/16012979 */
 .blink {
-    animation: blinker 2s linear infinite;
-}
-@keyframes blinker {  
-    50% { opacity: 0.2; }
-}
+    animation: blink-animation 1s steps(5, start) infinite;
+    -webkit-animation: blink-animation 1s steps(5, start) infinite;
+  }
+  @keyframes blink-animation {
+    to {
+      visibility: hidden;
+    }
+  }
+  @-webkit-keyframes blink-animation {
+    to {
+      visibility: hidden;
+    }
+  }
 
 .hidden {
     visibility: hidden;

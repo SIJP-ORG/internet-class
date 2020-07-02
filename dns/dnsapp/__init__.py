@@ -2,7 +2,6 @@ import os
 from flask import Flask, redirect, url_for, request
 from . import registration
 
-
 def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_mapping(
@@ -11,7 +10,10 @@ def create_app(test_config=None):
     )
 
     # UI
-    app.add_url_rule('/', view_func=registration.root, methods=['GET'])
+    app.add_url_rule('/', view_func=registration.show_main, methods=['GET'])
+    app.add_url_rule('/error', view_func=registration.show_error, methods=['GET'])
+    app.add_url_rule('/success', view_func=registration.show_success, methods=['GET'])
+    app.add_url_rule('/register', view_func=registration.register, methods=['POST'])
 
     # Test function
     @app.route('/hello')

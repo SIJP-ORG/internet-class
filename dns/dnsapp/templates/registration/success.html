@@ -1,18 +1,38 @@
-{% extends 'base.html' %}
+<!doctype html>
+<html>
+  <head>
+    <title>DNS app on Ninja.Fish</title>
+    <meta name="robots" content="noindex">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  </head>
 
-{% block header %}
-  <h1>{% block title %}Success (せいこう){% endblock %}</h1>
-{% endblock %}
+  <body>
+    <div class="title2-container">
+      <div></div>
+      <div>
+        <div class="title-string">
+          Success! (せいこう!)
+        </div>
+      </div>
+      <div><img class="title-img" src="{{ url_for('static', filename='ninja-fish-2.jpg') }}"></div>
+      <div></div>
+    </div>
 
-{% block content %}
-  <div>Your IP address {{info.ipaddress}} is now named as {{info.fullname}}.</div>
-  <div>あなたのIPアドレス {{info.ipaddress}} に {{info.fullname}} というなまえがつきました</div>
+    <hr>
 
-  <br>
-  <div>
-    Access your server. <a href=http://{{info.fullname}}>http://{{info.fullname}}</a>
-  </div>
-  <div>
-    あなたのサーバーにアクセスしましょう。<a href=http://{{info.fullname}}>http://{{info.fullname}}</a>
-  </div>
-{% endblock %}
+    <table>
+      <tr class="success-txt"><td>Your IP address {{info.ipaddress}} is now named as {{info.fullname}}.</td></tr>
+      <tr class="success-txt"><td>あなたのIPアドレス {{info.ipaddress}} に {{info.fullname}} というなまえがつきました</td></tr>
+
+      <tr class="success-txt"><td></td></tr>
+      
+      <tr class="success-txt"><td>
+        Access your server from here: <a href=http://{{info.fullname}}>http://{{info.fullname}}</a>
+      </td></tr>
+      <tr class="success-txt"><td>
+        ここからあなたのサーバーにアクセスしましょう: <a href=http://{{info.fullname}}>http://{{info.fullname}}</a>
+      </td></tr>
+    </table>
+  
+  </body>
+</html>
