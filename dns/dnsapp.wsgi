@@ -9,5 +9,5 @@ import logging
 logging.basicConfig(stream=sys.stderr)
 sys.path.insert(0,"/var/www/html/dns/")
 
-from messageapp import create_app
+from dnsapp import create_app
 application = create_app()
