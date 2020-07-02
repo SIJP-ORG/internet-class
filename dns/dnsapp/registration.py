@@ -102,6 +102,9 @@ def add_dns_resource(ipaddress, fullname):
         return 'Timeout. Please retry. (じかんぎれです。やりなおしてください)'
 
     except Exception as e:
-        # TODO: convert user firendly message (e.g. already used)
-        return 'Error {0}'.format(str(e))
+        error = str(e)
+        if 'already exists' in error:
+            return 'This name is already used. (このなまえは、すでにつかわれています)'
+
+        return 'Error (エラー): {0}'.format(error)
 
