@@ -1,6 +1,9 @@
 import functools
 import time
 import boto3
+import socket
+import re
+import mojimoji
 from flask import redirect, render_template, request, session, url_for
 
 DOMAIN = 'ninja.fish'
@@ -44,15 +47,19 @@ def register():
     '''
     Handle DNS registration request (POST).
     '''
-    ipaddress = request.form['ipaddress']
-    hostname = request.form['hostname']
+    ipaddress = mojimoji.zen_to_han(request.form['ipaddress'])
+    hostname = mojimoji.zen_to_han(request.form['hostname'])
     fullname = '{0}.{1}'.format(hostname, DOMAIN)
     error = None
 
     if not ipaddress:
         error = "Enter IP address. (IPアドレスをいれてください)"
+    elif not is_valid_ipv4_address(ipaddress):
+        error = "Invalid IP address format. (IPアドレスのフォーマットがまちがっています)"
     elif not hostname:
         error = "Enter a name. (なまえをいれてください)"
+    elif not is_valid_hostname(hostname):
+        error = "Invalid hostname. Use only alphabets, numbers, and hyphen. (なまえのフォーマットがまちがっています。アルファベット、すうじ、ハイフンだけがつかえます)"
 
     if error is None:
         error = add_dns_resource(ipaddress, fullname)
@@ -103,8 +110,28 @@ def add_dns_resource(ipaddress, fullname):
 
     except Exception as e:
         error = str(e)
+
         if 'already exists' in error:
             return 'This name is already used. (このなまえは、すでにつかわれています)'
 
         return 'Error (エラー): {0}'.format(error)
 
+def is_valid_ipv4_address(address):
+    '''
+    ref. https://stackoverflow.com/a/4017219
+    '''
+    try:
+        socket.inet_pton(socket.AF_INET, address)
+    except AttributeError:  # no inet_pton here, sorry
+        try:
+            socket.inet_aton(address)
+        except socket.error:
+            return False
+        return address.count('.') == 3
+    except socket.error:  # not a valid address
+        return False
+
+    return True
+
+def is_valid_hostname(hostname):
+    return re.match('^[0-9a-zA-Z\-]+$', hostname) is not None
