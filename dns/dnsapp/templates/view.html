@@ -7,7 +7,19 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
     <script type="text/javascript">// <![CDATA[
+      window.onload = setupOperations;
+  
+      function setupOperations()
+      {
+        refreshHostsTable();
+        setInterval("refreshHostsTable();", 15000);
+      }
       
+      function refreshHostsTable()
+      {
+        $('#hosts-table').load("hosts");
+      }
+  
       function loading()
           {
             var ipaddress_input = document.getElementById("ipaddress-input");

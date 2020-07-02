@@ -14,6 +14,7 @@ def create_app(test_config=None):
     app.add_url_rule('/error', view_func=registration.show_error, methods=['GET'])
     app.add_url_rule('/success', view_func=registration.show_success, methods=['GET'])
     app.add_url_rule('/register', view_func=registration.register, methods=['POST'])
+    app.add_url_rule('/hosts', view_func=registration.get_hosts_table, methods=['GET'])
 
     # Test function
     @app.route('/hello')

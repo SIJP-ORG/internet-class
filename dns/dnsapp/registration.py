@@ -4,6 +4,7 @@ import boto3
 import socket
 import re
 import mojimoji
+import pprint
 from flask import redirect, render_template, request, session, url_for
 
 DOMAIN = 'ninja.fish'
@@ -18,7 +19,7 @@ def show_main():
     param = {
         'domain': DOMAIN,
     }
-    return render_template('registration/view.html', param=param)
+    return render_template('view.html', param=param)
 
 def show_error():
     '''
@@ -30,7 +31,7 @@ def show_error():
         'domain': DOMAIN,
         'error': session['error'],
     }
-    return render_template('registration/view.html', param=param)
+    return render_template('view.html', param=param)
 
 def show_success():
     '''
@@ -40,7 +41,7 @@ def show_success():
         'ipaddress': session['ipaddress'],
         'fullname': session['fullname']
     }
-    return render_template('registration/success.html', info=info)
+    return render_template('success.html', info=info)
 
 
 def register():
@@ -135,3 +136,31 @@ def is_valid_ipv4_address(address):
 
 def is_valid_hostname(hostname):
     return re.match('^[0-9a-zA-Z\-]+$', hostname) is not None
+
+
+def get_hosts_table():
+    '''
+    Return table of all registered hosts
+    '''
+    result = []
+    r53 = boto3.client('route53')
+
+    listResponse = r53.list_resource_record_sets(
+        HostedZoneId = ZONEID,
+        MaxItems = '150')
+
+    for entry in listResponse['ResourceRecordSets']:
+        name = entry['Name'][:-1]  # drop last dot
+        value = entry['ResourceRecords'][0]['Value']
+        if entry['Type'] == 'A' and entry['Name'] not in ['dns.'+DOMAIN, 'name.'+DOMAIN]:
+            result.append({
+                'fullname': name,
+                'ipaddress': value,
+            })
+
+    result.sort(key=fullname_func)
+ 
+    return render_template('hosts.html', data=result)
+
+def fullname_func(item):
+    return item['fullname']
