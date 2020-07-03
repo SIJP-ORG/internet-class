@@ -25,7 +25,7 @@ Resources:
           DeleteOnTermination: true
           VolumeSize: 8
       SecurityGroupIds:
-      - sg-00f56b4a19895cd13 # messenger SG
+      - sg-09cbba64bea1c1674 # Open
       Tags:
         - Key: Name
           Value: !Ref MachineName
