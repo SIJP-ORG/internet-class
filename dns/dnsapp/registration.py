@@ -9,6 +9,13 @@ from flask import redirect, render_template, request, session, url_for
 
 DOMAIN = 'ninja.fish'
 ZONEID = 'Z04921881CATTNOQUCZ18'
+IPLIST = [
+   '44.234.110.211',
+   '34.222.188.32',
+   '44.234.84.223',
+   '44.234.67.189',
+   '10.1.1.1']
+
 
 def show_main():
     '''
@@ -48,19 +55,22 @@ def register():
     '''
     Handle DNS registration request (POST).
     '''
-    ipaddress = mojimoji.zen_to_han(request.form['ipaddress'])
-    hostname = mojimoji.zen_to_han(request.form['hostname'])
+    ipaddress = mojimoji.zen_to_han(request.form['ipaddress'].strip())
+    hostname = mojimoji.zen_to_han(request.form['hostname'].strip())
     fullname = '{0}.{1}'.format(hostname, DOMAIN)
     error = None
 
     if not ipaddress:
-        error = "Enter IP address. (IPアドレスをいれてください)"
+        error = "Enter IP address. (IPアドレスを いれてください)"
     elif not is_valid_ipv4_address(ipaddress):
-        error = "Invalid IP address format. (IPアドレスのフォーマットがまちがっています)"
+        error = "Invalid IP address format. (IPアドレスの フォーマットが まちがっています)"
     elif not hostname:
-        error = "Enter a name. (なまえをいれてください)"
+        error = "Enter a name. (なまえを いれてください)"
     elif not is_valid_hostname(hostname):
-        error = "Invalid hostname. Use only alphabets, numbers, and hyphen. (なまえのフォーマットがまちがっています。アルファベット、すうじ、ハイフンだけがつかえます)"
+        error = "Invalid hostname. Use only alphabets, numbers, and hyphen. (なまえの フォーマットが まちがっています。アルファベット、すうじ、ハイフンだけが つかえます)"
+    elif not ipaddress in IPLIST:
+        error = "This IP address is not ours. (このIPアドレスは、わたくしたちの ものでは ありません)"
+
 
     if error is None:
         error = add_dns_resource(ipaddress, fullname)

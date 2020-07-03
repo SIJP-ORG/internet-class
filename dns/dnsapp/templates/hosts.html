@@ -1,12 +1,12 @@
-<table class="msgtab">
-    <tr class="msghdr">
-        <th class="msgcell msgip">Host name<br>(ホストネーム)</th>
-        <th class="msgcell msghost">IP address<br>(IPアドレス)</th>
+<table class="hoststab">
+    <tr class="hostshdr">
+        <th class="hostscell">Host name<br>(ホストネーム)</th>
+        <th class="hostscell">IP address<br>(IPアドレス)</th>
     </tr>
     {% for entry in data %}
-    <tr class="msgrow">
-        <td class="msgcell msgip">{{ entry['fullname'] }}</td>
-        <td class="msgcell msghost">{{ entry['ipaddress'] }}</td>
+    <tr class="hostsrow">
+        <td class="hostscell">{{ entry['fullname'] }}</td>
+        <td class="hostscell">{{ entry['ipaddress'] }}</td>
     </tr>
     {% endfor %}
 </table>

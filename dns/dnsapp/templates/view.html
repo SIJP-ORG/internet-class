@@ -56,7 +56,7 @@
   </head>
 
   <body>
-    <div class="title-container">
+    <div id="title-container-1">
       <div></div>
       <div><img class="title-img" src="{{ url_for('static', filename='ninja-fish-1.jpg') }}"></div>
       <div>
@@ -69,13 +69,15 @@
 
     <hr>
 
-    <div class="send-container">
-      <div class="send-child center">
+    <div class="entry-container">
+      <div class="entry-child center">
         <form action="{{ url_for('register') }}" method="post">
           <table>
             <tr>
               <td class="entry-label">IP address (IPアドレス):</td>
-              <td class="entry-value"><input name="ipaddress" id="ipaddress-input" value="{{ param.ipaddress }}"></td>
+              <td class="entry-value">
+                <input name="ipaddress" id="ipaddress-input" value="{{ param.ipaddress }}">
+              </td>
             </tr>
             <tr>
               <td class="entry-label">Name (なまえ):</td>
@@ -96,7 +98,7 @@
           </table>
         </form>
       </div>
-      <div class="send-child center">
+      <div class="entry-child center">
         <div class="blink" id="progress-block" style="display: none;">
           Registering. It takes 1 to 2 minutes. (とうろくちゅうです。１～２ふんかかります)
         </div>
@@ -113,7 +115,7 @@
     <hr>
 
     <div class="hosts-title">Registered Names (とうろくされたなまえ)</div>
-    <div id="hosts-table"></div>
+    <div class="center" id="hosts-table"></div>
 
   </body>
 </html>

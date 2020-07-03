@@ -2,147 +2,131 @@ html {
     font-family: Arial, Helvetica, sans-serif;
     font-size: large;
     background: white;
-  }
-    
-  body {
+}
+body {
     max-width: 960px;
     margin: 0px auto;
-  }
-  
-  a {
-      color: #377ba8;
-  }
-  
-  hr {
+}
+a {
+    color: #377ba8;
+}
+hr {
     border: 3px solid #00cc00;
     margin: 10px 0;
-  }
-  
-  input {
+}
+input {
     font-family: Arial, Helvetica, sans-serif;
     font-size: large;
     padding: 3px;
-  }
-  
-  table {
+}
+table {
     border-collapse: collapse;
-  }
-  
-  th, td {
-      padding: 5px;
-  }
-  
-  .blink {
-      animation: blinker 2s linear infinite;
-  }
-  @keyframes blinker {  
-      50% { opacity: 0.2; }
-  }
-  
-  .hidden {
-      visibility: hidden;
-      width: 0;
-      height: 0;
-  }
-  
-  .title-container {
+}
+th, td {
+    padding: 5px;
+}
+
+.blink {
+    animation: blinker 2s linear infinite;
+}
+@keyframes blinker {  
+    50% { opacity: 0.2; }
+}
+.center {
+    margin: auto;
+    /*
+    border: 3px solid green;
+    */
+}
+
+#title-container-1 {
       display: grid;
       grid-template-columns: 20px 1fr 6fr 20px;
       grid-gap: 10px;
       align-items: center;
-  }
-  .title2-container {
+}
+#title-container-2 {
     display: grid;
     grid-template-columns: 20px 6fr 1fr 20px;
     grid-gap: 10px;
     align-items: center;
 }
 .title-img {
-      max-width: 100%;
-      max-height: 100%;
-  }
-  .title-string {
-      color: #333300;
-      font-size: xx-large;
-      text-align: center;
-  }
+    max-width: 100%;
+    max-height: 100%;
+}
+.title-string {
+    color: #006600;
+    font-size: xx-large;
+    text-align: center;
+}
   
-  .send-container {
-      display: grid;
-      grid-template-columns: 1fr;
-      grid-template-rows: 150px 60px;
-      grid-gap: 10px;
-      align-items: center;
-  }
-  
-  .center {
-    margin: auto;
-    /*border: 3px solid green;*/
-  }
-
-  .entry-label {
-      text-align: right;
-  }
-  .entry-value {
-      text-align: left;
-      font-size: xx-large;
-  }
-  #ipaddress-input {
+.entry-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 150px 60px;
+    grid-gap: 10px;
+    align-items: center;
+}
+.entry-label {
+    text-align: right;
+}
+.entry-value {
+    text-align: left;
+    font-size: xx-large;
+}
+#ipaddress-input {
     text-align: left;
     font-size: xx-large;
     width: 250px;
-  }
-  #hostname-input {
+}
+#hostname-input {
     text-align: right;
     font-size: xx-large;
     width: 150px;
-  }
-  .submit-container {
-      text-align: center;
-  }
-  #submit-button {
-      text-align: center;
-      background-color: #ffb3ff;
-      padding: 10px;
-  }
+}
+.submit-container {
+    text-align: center;
+}
+#submit-button {
+    text-align: center;
+    background-color: #99ff99;
+    padding: 10px;
+}
 
-  .error-message {
+.error-message {
     text-align: center;
     color: red;
-  }
+}
+.success-txt {
+    text-align: left;
+}
 
-  .success-txt {
-      text-align: left;
-  }
-  
-  .received-title {
-      font-weight: bold;
-  }
-  
-  .msgtab {
-      width: 100%;
-  }
-  .msghdr {
-      background-color: #e6e6e6;
-  }
-  .msgcell {
-      border: 1px solid black;
-      padding: 3px;
-  }
-  th.msgcell {
-      text-align: center;
-      font-weight: normal;
-  }
-  .msgip {
-      width: 150px;
-  }
-  .msghost {
-      width: 200px;
-  }
-  .msgrow:nth-child(even) {
-      background-color: #e6fff2;
-  }
-  .msgrow:nth-child(odd) {
-      background-color: #ffffe6;
-  }
+.hosts-title {
+    text-align: center;
+    margin: 0 0 5px 0;
+}
+.hoststab {
+    margin: 0 auto;
+    width: 400px;
+}
+.hostshdr {
+    color: white;
+    background-color: #004de6;
+}
+.hostscell {
+    border: 1px solid black;
+    font-size: medium;
+    font-weight: normal;
+    padding: 2px;
+}
+th.hostscell {
+    text-align: center;
+}
+.hostsrow:nth-child(even) {
+    background-color: #cceeff;
+}
+.hostsrow:nth-child(odd) {
+    background-color: #e6f7ff;
+}
   
