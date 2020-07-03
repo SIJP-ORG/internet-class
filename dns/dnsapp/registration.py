@@ -1,11 +1,10 @@
+from flask import redirect, render_template, request, session, url_for
+import boto3
 import functools
 import time
-import boto3
 import socket
 import re
 import mojimoji
-import pprint
-from flask import redirect, render_template, request, session, url_for
 
 DOMAIN = 'ninja.fish'
 ZONEID = 'Z04921881CATTNOQUCZ18'
