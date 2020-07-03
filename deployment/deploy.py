@@ -43,7 +43,7 @@ def launch(index, ami_id):
             {'ParameterKey': 'MachineName', 'ParameterValue': name},
             {'ParameterKey': 'ImageId', 'ParameterValue': ami_id},
         ],
-        OnFailure = 'DELETE',
+        OnFailure = 'DO_NOTHING',
         EnableTerminationProtection = False
     )
 
