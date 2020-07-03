@@ -3,51 +3,35 @@ html {
   font-size: large;
   background: white;
 }
-  
 body {
   max-width: 960px;
   margin: 0px auto;
 }
-
 a {
     color: #377ba8;
 }
-
 hr {
   border: 3px solid #ff3399;
   margin: 10px 0;
 }
-
 input {
   font-family: Arial, Helvetica, sans-serif;
   font-size: large;
   padding: 3px;
 }
-
 table {
   border-collapse: collapse;
 }
-
 th, td {
     padding: 5px;
 }
 
-/* https://stackoverflow.com/a/16012979 */
 .blink {
-    animation: blink-animation 1s steps(5, start) infinite;
-    -webkit-animation: blink-animation 1s steps(5, start) infinite;
-  }
-  @keyframes blink-animation {
-    to {
-      visibility: hidden;
-    }
-  }
-  @-webkit-keyframes blink-animation {
-    to {
-      visibility: hidden;
-    }
-  }
-
+    animation: blinker 2s linear infinite;
+}
+@keyframes blinker {  
+    50% { opacity: 0.2; }
+}
 .hidden {
     visibility: hidden;
     width: 0;
@@ -140,12 +124,12 @@ th, td {
 .received-title {
     font-weight: bold;
 }
-
 .msgtab {
     width: 100%;
 }
 .msghdr {
-    background-color: #e6e6e6;
+    color: white;
+    background-color: #26a69a;
 }
 .msgcell {
     border: 1px solid black;
@@ -162,8 +146,8 @@ th.msgcell {
     width: 200px;
 }
 .msgrow:nth-child(even) {
-    background-color: #e6fff2;
+    background-color: #ddf2f0;
 }
 .msgrow:nth-child(odd) {
-    background-color: #ffffe6;
+    background-color: #Eef7f5;
 }

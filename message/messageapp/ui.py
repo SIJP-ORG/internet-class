@@ -1,9 +1,13 @@
 from flask import render_template, request, session, redirect, url_for
-import requests
-import urllib.request
-import dns.resolver
+import sys
 import re
 import random
+import requests
+import urllib.request
+from urllib3.util.retry import Retry
+from requests.adapters import HTTPAdapter
+import dns.resolver
+import mojimoji
 from . import messageapi
 
 def root():
@@ -33,12 +37,14 @@ def send():
     target_ipaddress = ''
 
     # sanitize host name
-    target = re.sub(r'^(http://)?(https://)?([^/]+).*$', r'\3', target.strip())
+    target = re.sub(
+        r'^(http://)?(https://)?([^/]+).*$', r'\3',
+        mojimoji.zen_to_han(target.strip()))
 
     if not target:
-        error = "ホストネームをいれてください"
+        error = "ホストネームを いれてください"
     elif not body:
-        error = "メッセージをいれてください"
+        error = "メッセージを いれてください"
 
     if not error:
         try:
@@ -55,9 +61,19 @@ def send():
             'sender': hostname,
             'body': body,
         }
-        res = requests.post('http://{0}/messages/new'.format(target), json=data)
-        if res.status_code != 200:
-            error = "The message was not sent correctly. (メッセージはただしくおくられませんでした) " + res.reason
+
+        try:
+            # Set no-retry and short timeout (1 sec) because wrong address needs to be caught by this.
+            s = requests.Session()
+            s.mount('http://', HTTPAdapter(max_retries=0))
+            res = s.post('http://{0}/messages/new'.format(target), json=data, timeout=1)
+
+            if res.status_code != 200:
+                error = "Failed to send the message. (メッセージは おくられませんでした) ({0})".format(res.reason)
+        except requests.exceptions.Timeout as e:
+            error = "Failed to connect {0}. ({0} に ぜつぞくできませんでした)".format(target_withoutport)
+        except Exception as e:
+            error = 'Failed to send the message. (メッセージは おくられませんでした) ({0})'.format(e)
 
     session['target_hostname'] = target
     session['target_ipaddress'] = target_ipaddress
