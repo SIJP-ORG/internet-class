@@ -20,38 +20,16 @@
         $('#hosts-table').load("hosts");
       }
   
-      function loading()
-          {
-            var ipaddress_input = document.getElementById("ipaddress-input");
-            if (ipaddress_input != null) {
-              ipaddress_input.readOnly = true;
-            }
-
-            var hostname_input = document.getElementById("hostname-input");
-            if (hostname_input != null) {
-              hostname_input.readOnly = true;
-            }
-
-            var submit_button = document.getElementById("submit-button");
-            if (submit_button != null) {
-              submit_button.disabled = true;
-            }
-
-            var submit_button = document.getElementById("submit-button");
-            if (submit_button != null) {
-              submit_button.disabled = true;
-            }
-
-            var progress_block = document.getElementById("progress-block");
-            if (progress_block != null) {
-              progress_block.style.display = "block";
-            }
-
-            var error_block = document.getElementById("error-block");
-            if (error_block != null) {
-              error_block.style.display = "none";
-            }
-          }
+      function submitForm(e)
+      {
+          $("#submit-button").prop("value", "Registering... (とうろくちゅう...)");
+          $("#progress-block").css("display", "block");
+          $("#error-block").css("display", "none");
+          $("#ipaddress-input").prop("readonly", true);
+          $("#hostname-input").prop("readonly", true);
+          $("#submit-button").prop("disabled", true);
+          $("#register_form").submit();
+      }
   // ]]></script>
   </head>
 
@@ -71,36 +49,35 @@
 
     <div class="entry-container">
       <div class="entry-child center">
-        <form action="{{ url_for('register') }}" method="post">
-          <table>
-            <tr>
-              <td class="entry-label">IP address (IPアドレス):</td>
-              <td class="entry-value">
-                <input name="ipaddress" id="ipaddress-input" value="{{ param.ipaddress }}">
-              </td>
-            </tr>
-            <tr>
-              <td class="entry-label">Name (なまえ):</td>
-              <td class="entry-value">
-                <span>
-                  <input name="hostname" id="hostname-input" value="{{ param.hostname }}">
-                </span>
-                <span>
-                  .{{ param.domain }}
-                </span>
-              </td>
-            </tr>
-            <tr>
-              <td colspan="2" class="submit-container">
-                <input type="submit" id="submit-button" value="Register (とうろく)" onclick="loading();">
-              </td>
-            </tr>
-          </table>
-        </form>
+        <form action="{{ url_for('register') }}" method="post" id="register_form"></form>
+        <table>
+          <tr>
+            <td class="entry-label">IP address (IPアドレス):</td>
+            <td class="entry-value">
+              <input name="ipaddress" id="ipaddress-input" value="{{ param.ipaddress }}" form="register_form">
+            </td>
+          </tr>
+          <tr>
+            <td class="entry-label">Name (なまえ):</td>
+            <td class="entry-value">
+              <span>
+                <input name="hostname" id="hostname-input" value="{{ param.hostname }}" form="register_form">
+              </span>
+              <span>
+                .{{ param.domain }}
+              </span>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2" class="submit-container">
+              <input type="submit" id="submit-button" value="Register (とうろく)" onclick="submitForm();" form="register_form">
+            </td>
+          </tr>
+        </table>
       </div>
       <div class="entry-child center">
         <div class="blink" id="progress-block" style="display: none;">
-          Registering. It takes 1 to 2 minutes. (とうろくちゅうです。１～２ふんかかります)
+          Wait for a minute or two. (１～２ふん おまちください)
         </div>
         {% if param.error: %}
         <div class="error-container" id="error-block">
