@@ -7,8 +7,8 @@ NUM_REQUESTS = 100
 
 TIMEOUT = 20
 
-REGIST_URL = 'http://name.ninja.fish/register'
-REGIST_TIMEOUT = 120
+REGIST_URL = 'http://name3.ninja.fish/register'
+REGIST_TIMEOUT = 240
 
 '''
 Debug info
@@ -25,19 +25,22 @@ def request_registration():
     time.sleep(sleep_seconds)
 
     start = time.time()
-    session = requests.session()
-    payload = {
-        'ipaddress': '10.1.1.1',
-        'hostname': 'load-test-{0:05}'.format(random.randint(0,100000))
-    }
-    response = session.post(REGIST_URL, data=payload, timeout=REGIST_TIMEOUT)
-    process_sec = time.time() - start
+    with requests.Session() as session:
+        adapter = requests.adapters.HTTPAdapter(max_retries=0, pool_connections=100)
+        session.mount('http://', adapter)
 
-    error = ''
-    if response.status_code == 200 and 'error-message' in response.text:
-        error = '\n' + response.text
+        payload = {
+            'ipaddress': '10.1.1.1',
+            'hostname': 'load-test-{0:05}'.format(random.randint(0,100000))
+        }
+        response = session.post(REGIST_URL, data=payload, timeout=REGIST_TIMEOUT)
+        process_sec = time.time() - start
 
-    return '{0}, {1:.2f}, process_sec, {2}, init_sleep{3}'.format(response.status_code, process_sec, sleep_seconds, error)
+        error = ''
+        if response.status_code == 200 and 'error-message' in response.text:
+            error = '\n' + response.text
+
+        return '{0}, {1:.2f}, process_sec, {2}, init_sleep{3}'.format(response.status_code, process_sec, sleep_seconds, error)
 
 def main():
     result_list = []
@@ -52,7 +55,7 @@ def main():
             try:
                 data = future.result()
             except Exception as e:
-                data = str(e)
+                data = 'Test Client Error: {0}: {1}'.format(str(type(e)), e)
             finally:
                 result_list.append(data)
 
