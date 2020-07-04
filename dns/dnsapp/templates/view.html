@@ -20,7 +20,7 @@
         $('#hosts-table').load("hosts");
       }
   
-      function submitForm(e)
+      function onSubmit()
       {
           $("#submit-button").prop("value", "Registering... (とうろくちゅう...)");
           $("#progress-block").css("display", "block");
@@ -28,7 +28,7 @@
           $("#ipaddress-input").prop("readonly", true);
           $("#hostname-input").prop("readonly", true);
           $("#submit-button").prop("disabled", true);
-          $("#register_form").submit();
+          return true;
       }
   // ]]></script>
   </head>
@@ -49,7 +49,7 @@
 
     <div class="entry-container">
       <div class="entry-child center">
-        <form action="{{ url_for('register') }}" method="post" id="register_form"></form>
+        <form action="{{ url_for('register') }}" method="post" id="register_form" onsubmit="onSubmit();"></form>
         <table>
           <tr>
             <td class="entry-label">IP address (IPアドレス):</td>
@@ -70,7 +70,7 @@
           </tr>
           <tr>
             <td colspan="2" class="submit-container">
-              <input type="submit" id="submit-button" value="Register (とうろく)" onclick="submitForm();" form="register_form">
+              <input type="submit" id="submit-button" value="Register (とうろく)" form="register_form">
             </td>
           </tr>
         </table>
