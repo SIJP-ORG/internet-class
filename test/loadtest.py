@@ -5,28 +5,54 @@ import random
 
 NUM_REQUESTS = 100
 
-TIMEOUT = 20
-
 REGIST_URL = 'http://name3.ninja.fish/register'
 REGIST_TIMEOUT = 240
+
+HOSTS_URL = 'http://name3.ninja.fish/hosts'
+HOSTS_TIMEOUT = 30
 
 '''
 Debug info
 set http_proxy=127.0.0.1:8888
 '''
 
-def load_url(url, timeout):
-    ans = requests.head(url, timeout=timeout)
-    return ans.status_code
-
-def request_registration():
-    # adding time distribution across 10 seconds
-    sleep_seconds = random.randint(1,10)
+def request_hosts():
+    # adding time distribution across 5 seconds
+    sleep_seconds = random.randint(1,5)
     time.sleep(sleep_seconds)
 
     start = time.time()
     with requests.Session() as session:
-        adapter = requests.adapters.HTTPAdapter(max_retries=0, pool_connections=100)
+        adapter = requests.adapters.HTTPAdapter(max_retries=0)
+        session.mount('http://', adapter)
+
+    response = requests.get(HOSTS_URL, timeout=HOSTS_TIMEOUT)
+    status_code1 = response.status_code
+    process1_sec = time.time() - start
+
+    time.sleep(20)
+
+    start = time.time()
+    with requests.Session() as session:
+        adapter = requests.adapters.HTTPAdapter(max_retries=0)
+        session.mount('http://', adapter)
+
+    response = requests.get(HOSTS_URL, timeout=HOSTS_TIMEOUT)
+    status_code2 = response.status_code
+    process2_sec = time.time() - start
+
+    return '{0}, {1:.2f}, process1_sec, {2}, {3:.2f}, process2_sec, {4}, init_sleep'.format(
+        status_code1, process1_sec, status_code2, process2_sec, sleep_seconds)
+
+
+def request_registration():
+    # adding time distribution across 5 seconds
+    sleep_seconds = random.randint(1,5)
+    time.sleep(sleep_seconds)
+
+    start = time.time()
+    with requests.Session() as session:
+        adapter = requests.adapters.HTTPAdapter(max_retries=0)
         session.mount('http://', adapter)
 
         payload = {
@@ -37,8 +63,11 @@ def request_registration():
         process_sec = time.time() - start
 
         error = ''
-        if response.status_code == 200 and 'error-message' in response.text:
-            error = '\n' + response.text
+        if response.status_code == 200:
+            for line in response.text.split('\n'):
+                if 'error-message' in line:
+                    error = '\n' + line
+                    break
 
         return '{0}, {1:.2f}, process_sec, {2}, init_sleep{3}'.format(response.status_code, process_sec, sleep_seconds, error)
 
@@ -46,18 +75,19 @@ def main():
     result_list = []
     random.seed()
 
-    with concurrent.futures.ThreadPoolExecutor(max_workers=NUM_REQUESTS) as executor:
-        future_to_url = []
+    with concurrent.futures.ThreadPoolExecutor(max_workers=NUM_REQUESTS*2) as executor:
+        future_requests = []
         for i in range(0, NUM_REQUESTS):
-            future_to_url.append(executor.submit(request_registration))
+            future_requests.append(executor.submit(request_registration))
+            future_requests.append(executor.submit(request_hosts))
 
-        for future in concurrent.futures.as_completed(future_to_url):
+        for future in concurrent.futures.as_completed(future_requests):
             try:
-                data = future.result()
+                result = future.result()
             except Exception as e:
-                data = 'Test Client Error: {0}: {1}'.format(str(type(e)), e)
+                result = 'Test Client Error: {0}: {1}'.format(str(type(e)), e)
             finally:
-                result_list.append(data)
+                result_list.append(result)
 
     for entry in result_list:
         print(entry)
