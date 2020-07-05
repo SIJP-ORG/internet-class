@@ -179,17 +179,19 @@ def get_hosts_table():
     '''
     Return table of all registered hosts
     '''
-    return render_template('hosts.html', data=get_hosts_from_cache())
+    return render_template('hosts.html', data=get_hosts())
 
 
-def get_hosts_from_cache():
+def get_hosts():
     '''
-    Read the list of hosts from cache file.
-    If cache is 5 sec or older, ask via API.
+    Return the list of dictionary where keys are 'fullname' and 'ipaddress', sorted by full name.
+    Read the list of hosts from cache file if available.
+    If cache is 5 sec or older, get the data from Route 53 API.
     '''
-    lock_file = current_app.instance_path + '/hosts.lock'
-    cache_file = current_app.instance_path + '/hosts.cache'
+    lock_file = os.path.join(current_app.instance_path, 'hosts.lock')
+    cache_file = os.path.join(current_app.instance_path, 'hosts.cache')
 
+    # Extremely simple lock -- only one request may read and update the cache at one time.
     with FileLock(lock_file, timeout=15):
         fread = None
         try:
