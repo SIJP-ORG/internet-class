@@ -96,6 +96,7 @@ def add_dns_resource(ipaddress, fullname):
     '''
     try:
         r53 = boto3.session.Session().client('route53')
+        changeId = None
 
         # Create entry
         for waitcount in range (0, REQUEST_RETRY):
@@ -113,7 +114,11 @@ def add_dns_resource(ipaddress, fullname):
                             }
                         }]
                     })
+
                 changeId = createResponse['ChangeInfo']['Id']
+                if not changeId:
+                    time.sleep(10)
+                    continue  # retry
                 break
             except ClientError as e:
                 if 'it already exists' in str(e):
@@ -123,6 +128,9 @@ def add_dns_resource(ipaddress, fullname):
                     continue  # retry
                 else:
                     raise
+
+        if not changeId:
+            return 'Failed to register. Please retry. (とうろくにしっぱいしました。やりなおしてください)'
 
         # Wait until completion
         for waitcount in range (0, SYNC_RETRY):
