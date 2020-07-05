@@ -1,5 +1,6 @@
 from flask import redirect, render_template, request, session, url_for
 import boto3
+from botocore.exceptions import ClientError
 import functools
 import time
 import socket
@@ -14,6 +15,10 @@ IPLIST = [
     '100.20.65.5',
     '44.234.23.149',
     '10.1.1.1']
+
+REQUEST_RETRY = 3
+SYNC_WAIT_SEC = 10
+SYNC_RETRY = 12  # max wait = 120 sec
 
 def show_main():
     '''
@@ -69,7 +74,6 @@ def register():
     elif not ipaddress in IPLIST:
         error = "This IP address is not ours. (このIPアドレスは、わたくしたちの ものでは ありません)"
 
-
     if error is None:
         error = add_dns_resource(ipaddress, fullname)
         pass
@@ -91,39 +95,53 @@ def add_dns_resource(ipaddress, fullname):
     Returning None for success. Error string for failure.
     '''
     try:
-        r53 = boto3.client('route53')
+        r53 = boto3.session.Session().client('route53')
 
-        createResponse = r53.change_resource_record_sets(
-            HostedZoneId = ZONEID,
-            ChangeBatch = {
-                'Changes': [{
-                    'Action': 'CREATE',
-                    'ResourceRecordSet': {
-                        'Type': 'A',
-                        'TTL': 60,
-                        'Name': fullname,
-                        'ResourceRecords': [{'Value': ipaddress}]
-                    }
-                }]
-            })
-        changeId = createResponse['ChangeInfo']['Id']
+        # Create entry
+        for waitcount in range (0, REQUEST_RETRY):
+            try:
+                createResponse = r53.change_resource_record_sets(
+                    HostedZoneId = ZONEID,
+                    ChangeBatch = {
+                        'Changes': [{
+                            'Action': 'CREATE',
+                            'ResourceRecordSet': {
+                                'Type': 'A',
+                                'TTL': 60,
+                                'Name': fullname,
+                                'ResourceRecords': [{'Value': ipaddress}]
+                            }
+                        }]
+                    })
+                changeId = createResponse['ChangeInfo']['Id']
+                break
+            except ClientError as e:
+                if 'it already exists' in str(e):
+                    return 'This name is already used. (このなまえは、すでにつかわれています)'
+                elif e.response['Error']['Code'] == 'Throttling' or e.response['Error']['Code'] == 'PriorRequestNotComplete':
+                    time.sleep(10)
+                    continue  # retry
+                else:
+                    raise
 
-        # Max wait = 120 sec (5 * 24)
-        for waitcount in range (0, 24):
-            time.sleep(5)
-            changeResponse = r53.get_change(Id = changeId)
-            if changeResponse['ChangeInfo']['Status'] == 'INSYNC':
-                return None
-
+        # Wait until completion
+        for waitcount in range (0, SYNC_RETRY):
+            time.sleep(SYNC_WAIT_SEC)
+            try:
+                changeResponse = r53.get_change(Id = changeId)
+                if changeResponse['ChangeInfo']['Status'] == 'INSYNC':
+                    return None # success
+            except ClientError as e:
+                if e.response['Error']['Code'] == 'Throttling':
+                    continue  # retry
+                else:
+                    raise
         return 'Timeout. Please retry. (じかんぎれです。やりなおしてください)'
 
+    except ClientError as e:
+        return 'Error (エラー): {0}: {1}'.format(e.response['Error']['Code'], e)
     except Exception as e:
-        error = str(e)
-
-        if 'already exists' in error:
-            return 'This name is already used. (このなまえは、すでにつかわれています)'
-
-        return 'Error (エラー): {0}'.format(error)
+        return 'Error (エラー): {0}: {1}'.format(str(type(e)), e)
 
 def is_valid_ipv4_address(address):
     '''
@@ -151,7 +169,7 @@ def get_hosts_table():
     Return table of all registered hosts
     '''
     result = []
-    r53 = boto3.client('route53')
+    r53 = boto3.session.Session().client('route53')
 
     listResponse = r53.list_resource_record_sets(
         HostedZoneId = ZONEID,
