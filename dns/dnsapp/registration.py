@@ -1,11 +1,14 @@
-from flask import redirect, render_template, request, session, url_for
+from flask import redirect, render_template, request, session, url_for, current_app
 import boto3
 from botocore.exceptions import ClientError
+import json
 import functools
 import time
 import socket
 import re
 import mojimoji
+import os
+from filelock import Timeout, FileLock
 
 DOMAIN = 'ninja.fish'
 ZONEID = 'Z04921881CATTNOQUCZ18'
@@ -176,6 +179,46 @@ def get_hosts_table():
     '''
     Return table of all registered hosts
     '''
+    return render_template('hosts.html', data=get_hosts_from_cache())
+
+
+def get_hosts_from_cache():
+    '''
+    Read the list of hosts from cache file.
+    If cache is 5 sec or older, ask via API.
+    '''
+    lock_file = current_app.instance_path + '/hosts.lock'
+    cache_file = current_app.instance_path + '/hosts.cache'
+
+    with FileLock(lock_file, timeout=15):
+        fread = None
+        try:
+            fread = open(cache_file, 'rt')
+        except FileNotFoundError:
+            pass
+        if fread:
+            with fread:
+                cached_data = json.load(fread)
+                cached_time = float(cached_data['timestamp'])
+                if time.time() - cached_time < 5.0:
+                    #print('*** cache hit')
+                    return cached_data['data']
+
+        #print('*** hosts.cache expired (or missing)')
+        data = get_hosts_from_api()
+
+        with open(cache_file, 'wt') as fwrite:
+            json.dump({
+                'timestamp': time.time(),
+                'data': data,
+            }, fwrite)
+        return data
+
+
+def get_hosts_from_api():
+    '''
+    Get the list of hosts from Route 53 API
+    '''
     result = []
     r53 = boto3.session.Session().client('route53')
 
@@ -193,8 +236,7 @@ def get_hosts_table():
             })
 
     result.sort(key=fullname_func)
- 
-    return render_template('hosts.html', data=result)
+    return result
 
 def fullname_func(item):
     return item['fullname']

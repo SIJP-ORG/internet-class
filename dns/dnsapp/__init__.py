@@ -9,6 +9,12 @@ def create_app(test_config=None):
         SEND_FILE_MAX_AGE_DEFAULT=0,
     )
 
+    # ensure the instance folder exists
+    try:
+        os.makedirs(app.instance_path)
+    except OSError:
+        pass
+
     # UI
     app.add_url_rule('/', view_func=registration.show_main, methods=['GET'])
     app.add_url_rule('/error', view_func=registration.show_error, methods=['GET'])
