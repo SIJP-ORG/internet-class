@@ -18,20 +18,14 @@
       
       function refreshMessageBlock()
       {
-         $('#received-table').load("table");
+         $("#received-table").load("table");
       }
 
       function swapResultBlocks()
       {
-        var status_block = document.getElementById("status-block");
-        if (status_block != null) {
-          status_block.style.display = "none";
-        }
-
-        var next_block = document.getElementById("next-block");
-        if (next_block != null) {
-          next_block.style.display = "inline-block";
-        }
+        $("#status-block").css("display", "none");
+        $("#next-block").css("display", "inline-block");
+        $("#target-ip").removeClass("blink");
       }
 
       function targetInput2OnChange()
@@ -84,7 +78,7 @@
           </tr>
           <tr>
             <td class="machine-label">IP address (IPアドレス):</td>
-            <td class="machine-value">{{ param.target_ipaddress }}</td>
+            <td class="machine-value blink error-message" id="target-ip">{{ param.target_ipaddress }}</td>
           </tr>
         </table>
       </div>

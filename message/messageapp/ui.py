@@ -10,6 +10,8 @@ import dns.resolver
 import mojimoji
 from . import messageapi
 
+FQDNSUFFIX = ".ninja.fish"
+
 def root():
     '''
     Main UI to accept the request.
@@ -36,10 +38,16 @@ def send():
     error = None
     target_ipaddress = ''
 
-    # sanitize host name
-    target = re.sub(
-        r'^(http://)?(https://)?([^/]+).*$', r'\3',
-        mojimoji.zen_to_han(target.strip()))
+    # sanitize host name input
+    # 1. convert any full-width into half-width
+    target = mojimoji.zen_to_han(target.strip())
+    # 2. lower case
+    target = target.lower()
+    # 3. remove http or https prefix
+    target = re.sub(r'^(http://)?(https://)?([^/]+).*$', r'\3', target)
+    # 4. append domain name if it does not ends
+    if not target.endswith(FQDNSUFFIX):
+        target = target.split('.')[0] + FQDNSUFFIX
 
     if not target:
         error = "ホストネームを いれてください"
