@@ -229,7 +229,7 @@ def get_hosts_from_api():
     for entry in listResponse['ResourceRecordSets']:
         name = entry['Name'][:-1]  # drop last dot
         value = entry['ResourceRecords'][0]['Value']
-        if entry['Type'] == 'A' and entry['Name'] not in ['dns.'+DOMAIN, 'name.'+DOMAIN]:
+        if entry['Type'] == 'A' and name not in ['name.'+DOMAIN, 'template.'+DOMAIN]:
             result.append({
                 'fullname': name,
                 'ipaddress': value,
