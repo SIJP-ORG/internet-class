@@ -13,10 +13,10 @@ from filelock import Timeout, FileLock
 DOMAIN = 'ninja.fish'
 ZONEID = 'Z04921881CATTNOQUCZ18'
 IPLIST = [
-    '34.222.205.148',
-    '44.234.84.244',
-    '100.20.65.5',
-    '44.234.23.149',
+    '44.226.204.24',
+    '34.222.197.57',
+    '44.229.42.235',
+    '44.234.62.221',
     '10.1.1.1']
 
 REQUEST_RETRY = 3
