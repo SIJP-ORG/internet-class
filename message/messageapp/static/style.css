@@ -120,6 +120,11 @@ th, td {
     color: red;
 }
 
+#next-button {
+    background-color: #ff77aa;
+    font-size: x-large;
+}
+
 .received-title {
     font-weight: bold;
 }
