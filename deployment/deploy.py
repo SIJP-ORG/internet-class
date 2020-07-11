@@ -17,7 +17,7 @@ def parse_argument():
              c) AWS_SECRET_ACCESS_KEY
             '''))
     parser.add_argument('-n', '--number-of-instances', dest='number_of_instances', type=int, default=1)
-    parser.add_argument('-a', '--ami-id', dest='ami_id', default='ami-04a8d32f7987c7c69')
+    parser.add_argument('-a', '--ami-id', dest='ami_id', default='ami-0ef5e18cb4fea360a')
     return parser.parse_args()
 
 def main():
