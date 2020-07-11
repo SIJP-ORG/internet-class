@@ -49,10 +49,10 @@ def send():
     if not target.endswith(FQDNSUFFIX):
         target = target.split('.')[0] + FQDNSUFFIX
 
-    if not target:
-        error = "ホストネームを いれてください"
+    if target == FQDNSUFFIX:
+        error = "Enter host name (ホストネームを いれてください)"
     elif not body:
-        error = "メッセージを いれてください"
+        error = "Enter a message (メッセージを いれてください)"
 
     if not error:
         try:

@@ -105,7 +105,7 @@
             <tr>
               <td>Message was sent successfully. (メッセージが おくられました)</td>
               <td><form action="{{ url_for('root') }}">
-                <input type="submit" id="next-button" value="Next message (つぎのメッセージ)">
+                <input type="submit" class="large-button" value="Next message (つぎのメッセージ)">
               </form></td>
             </tr>
           </table>
@@ -116,7 +116,7 @@
           <table>
             <td class="error-message">{{ param.error }}</td>
             <td><form action="{{ url_for('root') }}">
-              <input type="submit" value="Start over (やりなおす)">
+              <input type="submit" class="large-button" value="Start over (やりなおす)">
             </form></td>
           </table>
         </div>

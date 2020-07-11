@@ -120,7 +120,7 @@ th, td {
     color: red;
 }
 
-#next-button {
+.large-button {
     background-color: #ff77aa;
     font-size: x-large;
 }
