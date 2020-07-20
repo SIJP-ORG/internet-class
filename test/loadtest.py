@@ -3,7 +3,7 @@ import requests
 import time
 import random
 
-NUM_REQUESTS = 100
+NUM_REQUESTS = 120
 
 REGIST_URL = 'http://name.ninja.fish/register'
 REGIST_TIMEOUT = 240
